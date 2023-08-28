@@ -1,9 +1,13 @@
 import express, { json } from "express";
+import * as db from "./src/config/db/initialData.js";
+
 import cors from "cors";
 
 const app = express();
 const env = process.env;
 const PORT = env.PORT || 5000;
+
+db.createInitialData();
 
 app.use(cors());
 app.use(json());

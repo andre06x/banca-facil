@@ -21,7 +21,7 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Conexão estabelecida com auth-db.");
+    console.log("Conexão estabelecida com db.");
   })
   .catch((err) => {
     console.log("Erro ao conenectar com auth db");
