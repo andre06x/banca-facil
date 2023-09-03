@@ -9,6 +9,10 @@ const Usuario = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
+    email: {
+      type: Sequelize.STRING,
+      unique: true,
+    },
     nome: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -16,7 +20,7 @@ const Usuario = sequelize.define(
     matricula: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
+      unique: false,
     },
     senha: {
       type: Sequelize.STRING,
@@ -29,6 +33,10 @@ const Usuario = sequelize.define(
     admin: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
+    },
+    responsavel: {
+      type: Sequelize.UUID,
+      allowNull: true,
     },
   },
   {}
