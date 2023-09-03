@@ -2,6 +2,7 @@ import express, { json } from "express";
 import * as db from "./src/config/db/initialData.js";
 
 import cors from "cors";
+import { router } from "./routes.js";
 
 const app = express();
 const env = process.env;
@@ -11,6 +12,7 @@ db.createInitialData();
 
 app.use(cors());
 app.use(json());
+app.use(router);
 
 app.get("/api/status", (_, res) => {
   const status = {
