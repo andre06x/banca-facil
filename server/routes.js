@@ -38,6 +38,10 @@ router.get(
   "/api/buscar-funcionario-estabelecimento/:id",
   FuncionariosEstabelecimentoController.buscarFuncionariosEstabelecimento
 );
+router.get(
+  "/api/buscar-estabelecimento-funcionario/:id",
+  FuncionariosEstabelecimentoController.buscarEstabelecimentoFuncionario
+);
 router.delete(
   "/api/excluir-vinculo-funcionario-estabelecimento/:id",
   FuncionariosEstabelecimentoController.excluirFuncionariosEstabelecimento

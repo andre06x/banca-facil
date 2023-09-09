@@ -19,7 +19,25 @@ class FuncionariosEstabelecimentoRepository {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
   }
-
+  async buscarEstabelecimentoFuncionario(id) {
+    try {
+      const estabelecimentos = await FuncionariosEstabelecimento.findAll({
+        include: [
+          {
+            model: Estabelecimento,
+            attributes: ["cidade", "lat", "lon", "nome_estabelecimento"],
+          },
+          {
+            model: Usuario,
+          },
+        ],
+        where: { usuario_id: id },
+      });
+      return estabelecimentos;
+    } catch (err) {
+      throw new APIException(httpStatus.BAD_REQUEST, err.message);
+    }
+  }
   async buscarFuncionarioEstabelecimento(id) {
     try {
       const estabelecimentos = await FuncionariosEstabelecimento.findAll({
