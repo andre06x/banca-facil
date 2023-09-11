@@ -30,7 +30,7 @@ class UsuarioService {
       const { email, senha } = req.body;
       const usuario = await UsuarioRepository.findByEmail(email);
       if (!usuario) {
-        throw new UserException(httpStatus.BAD_REQUEST, "Usuário não encontrado.");
+        throw new APIException(httpStatus.BAD_REQUEST, "Usuário não encontrado.");
       }
 
       await this.validarSenha(senha, usuario.senha);
@@ -157,7 +157,7 @@ class UsuarioService {
 
   async validarSenha(senha, hashSenha) {
     if (!(await bcrypt.compare(senha, hashSenha))) {
-      throw new UserException(httpStatus.UNAUTHORIZED, "Senha não confere.");
+      throw new APIException(httpStatus.UNAUTHORIZED, "Senha não confere.");
     }
   }
 }
