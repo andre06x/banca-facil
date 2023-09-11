@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import Usuario from "../../models/Usuario.js";
 import Estabelecimento from "../../models/Estabelecimento.js";
 import FuncionariosEstabelecimento from "../../models/FuncionariosEstabelecimento.js";
+import Categoria from "../../models/Categorias.js";
+import Categorias from "../../models/Categorias.js";
 
 const senha = await bcrypt.hash("123456", 10);
 
@@ -21,6 +23,7 @@ export async function createInitialData() {
     await Usuario.sync({ alter: true });
     await Estabelecimento.sync({ alter: true });
     await FuncionariosEstabelecimento.sync({ alter: true });
+    await Categorias.sync({ alter: true });
     await Usuario.bulkCreate(usuarios, { ignoreDuplicates: true });
   } catch (err) {
     console.log("Err" + err.message);
