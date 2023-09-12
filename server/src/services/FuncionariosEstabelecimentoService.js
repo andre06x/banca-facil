@@ -42,6 +42,25 @@ class FuncionariosEstabelecimentoService {
     }
   }
 
+  async buscarEstabelecimentoFuncionario(req) {
+    try {
+      const { id } = req.params;
+      this.validarId(id);
+
+      const estabelecimento =
+        await FuncionariosEstabelecimentoRepository.buscarEstabelecimentoFuncionario(id);
+      return {
+        status: httpStatus.SUCCESS,
+        content: estabelecimento,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
   async excluirVicnuloFuncionarioEstabelecimento(req) {
     try {
       const { id } = req.params;

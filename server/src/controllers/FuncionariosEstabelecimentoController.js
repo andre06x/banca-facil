@@ -12,6 +12,12 @@ class FuncionariosEstabelecimentoController {
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
 
+  async buscarEstabelecimentoFuncionario(req, res) {
+    const Estabelecimento =
+      await FuncionariosEstabelecimentoService.buscarEstabelecimentoFuncionario(req);
+    return res.status(Estabelecimento.status).json(Estabelecimento);
+  }
+
   async excluirFuncionariosEstabelecimento(req, res) {
     const Estabelecimento =
       await FuncionariosEstabelecimentoService.excluirVicnuloFuncionarioEstabelecimento(
