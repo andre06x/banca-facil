@@ -3,17 +3,15 @@ import * as db from "./src/config/db/initialData.js";
 
 import cors from "cors";
 import { router } from "./routes.js";
+import { routerv2 } from "./routesv2.js";
 
 const app = express();
 const env = process.env;
 const PORT = env.PORT || 5000;
 
 db.createInitialData();
-
 app.use(cors());
 app.use(json());
-app.use(router);
-
 app.get("/api/status", (_, res) => {
   const status = {
     service: "API-GESTOR-BANCAS",
@@ -22,6 +20,8 @@ app.get("/api/status", (_, res) => {
   };
   return res.status(200).json(status);
 });
+app.use(routerv2);
+app.use(router);
 
 app.listen(PORT, () => {
   console.info(`server iniciou na porta ${PORT}`);
