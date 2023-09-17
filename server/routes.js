@@ -6,6 +6,7 @@ import UsuarioController from "./src/controllers/UsuarioController.js";
 import FuncionariosEstabelecimentoController from "./src/controllers/FuncionariosEstabelecimentoController.js";
 import Categorias from "./src/models/Categorias.js";
 import CategoriasController from "./src/controllers/CategoriasController.js";
+import ProdutosController from "./src/controllers/ProdutosController.js";
 const router = new Router();
 
 router.post("/api/usuario", UsuarioController.criarUsuario);
@@ -57,4 +58,15 @@ router.get(
 router.get("/api/categorias/:id", CategoriasController.buscarCategoria);
 router.put("/api/categorias/:id", CategoriasController.editarCategoria);
 router.delete("/api/categorias/:id", CategoriasController.excluirCategoria);
+
+//produtos
+router.post("/api/produtos", ProdutosController.criarProduto);
+router.get(
+  "/api/todos-produtos/:estabelecimentoid",
+  ProdutosController.buscarTodosProdutos
+);
+router.get("/api/produtos/:id", ProdutosController.buscarProduto);
+router.put("/api/produtos/:id", ProdutosController.editarProduto);
+router.delete("/api/produtos/:id", ProdutosController.excluirProduto);
+
 export { router };
