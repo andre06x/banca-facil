@@ -2,8 +2,8 @@ import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
 import Usuario from "./Usuario.js";
 
-const Categorias = sequelize.define(
-  "categorias",
+const Categoria = sequelize.define(
+  "categoria",
   {
     id: {
       type: Sequelize.UUID,
@@ -19,5 +19,5 @@ const Categorias = sequelize.define(
   { underscored: true, freezeTableName: true }
 );
 
-Categorias.belongsTo(Usuario, { foreignKey: "usuario_id" });
-export default Categorias;
+Categoria.belongsTo(Usuario, { foreignKey: "usuario_id" });
+export default Categoria;

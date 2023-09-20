@@ -3,8 +3,8 @@ import Sequelize from "sequelize";
 import Usuario from "./Usuario.js";
 import Estabelecimento from "./Estabelecimento.js";
 
-const FuncionariosEstabelecimento = sequelize.define(
-  "funcionarios_estabelecimento",
+const FuncionarioEstabelecimento = sequelize.define(
+  "funcionario_estabelecimento",
   {
     id: {
       type: Sequelize.UUID,
@@ -15,9 +15,9 @@ const FuncionariosEstabelecimento = sequelize.define(
   { underscored: true, freezeTableName: true }
 );
 
-FuncionariosEstabelecimento.belongsTo(Usuario, { foreignKey: "usuario_id" });
-FuncionariosEstabelecimento.belongsTo(Estabelecimento, {
+FuncionarioEstabelecimento.belongsTo(Usuario, { foreignKey: "usuario_id" });
+FuncionarioEstabelecimento.belongsTo(Estabelecimento, {
   foreignKey: "estabelecimento_id",
 });
 
-export default FuncionariosEstabelecimento;
+export default FuncionarioEstabelecimento;

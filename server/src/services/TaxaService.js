@@ -39,9 +39,11 @@ class TaxaService {
     }
   }
 
-  async buscarTodasTaxas() {
+  async buscarTodasTaxas(req) {
     try {
-      const todasTaxas = await TaxaRepository.buscarTodasTaxas();
+      const { usuarioid } = req.params;
+      this.validarId(id);
+      const todasTaxas = await TaxaRepository.buscarTodasTaxas(usuarioid);
 
       return {
         status: httpStatus.SUCCESS,

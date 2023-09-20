@@ -1,30 +1,30 @@
-import ProdutosService from "../services/ProdutosService.js";
+import ProdutoService from "../services/ProdutoService.js";
 
-class ProdutosController {
+class ProdutoController {
   async criarProduto(req, res) {
-    const produto = await ProdutosService.criarProduto(req);
+    const produto = await ProdutoService.criarProduto(req);
     return res.status(produto.status).json(produto);
   }
 
   async buscarProduto(req, res) {
-    const produto = await ProdutosService.buscarProduto(req);
+    const produto = await ProdutoService.buscarProduto(req);
     return res.status(produto.status).json(produto);
   }
 
   async buscarTodosProdutos(req, res) {
-    const produto = await ProdutosService.buscarTodosProdutos(req);
+    const produto = await ProdutoService.buscarTodosProdutos(req);
     return res.status(produto.status).json(produto);
   }
 
   async editarProduto(req, res) {
-    const produto = await ProdutosService.editarProduto(req);
+    const produto = await ProdutoService.editarProduto(req);
     return res.status(produto.status).json(produto);
   }
 
   async excluirProduto(req, res) {
-    const produto = await ProdutosService.excluirProduto(req);
+    const produto = await ProdutoService.excluirProduto(req);
     return res.status(produto.status).json(produto);
   }
 }
 
-export default new ProdutosController();
+export default new ProdutoController();

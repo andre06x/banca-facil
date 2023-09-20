@@ -30,7 +30,10 @@ class UsuarioService {
       const { email, senha } = req.body;
       const usuario = await UsuarioRepository.findByEmail(email);
       if (!usuario) {
-        throw new APIException(httpStatus.BAD_REQUEST, "Usuário não encontrado.");
+        throw new APIException(
+          httpStatus.BAD_REQUEST,
+          "Usuário não encontrado."
+        );
       }
 
       await this.validarSenha(senha, usuario.senha);
@@ -59,7 +62,9 @@ class UsuarioService {
     try {
       const { admin, id: idToken } = req.auth;
       const { id } = req.params;
-      const usuario = await UsuarioRepository.buscarUsuario(admin ? id : idToken);
+      const usuario = await UsuarioRepository.buscarUsuario(
+        admin ? id : idToken
+      );
 
       return {
         status: httpStatus.SUCCESS,
@@ -73,7 +78,7 @@ class UsuarioService {
     }
   }
 
-  async buscarTodosUsuario() {
+  async buscarTodosUsuarios() {
     try {
       const usuarios = await UsuarioRepository.buscarTodosUsuarios();
       return {
@@ -94,7 +99,10 @@ class UsuarioService {
       const obj_usuario = req.body;
       this.validarId(id);
 
-      const usuarioEditado = await UsuarioRepository.editarUsuario(id, obj_usuario);
+      const usuarioEditado = await UsuarioRepository.editarUsuario(
+        id,
+        obj_usuario
+      );
 
       return {
         status: httpStatus.SUCCESS,
@@ -145,7 +153,10 @@ class UsuarioService {
   validarDadosUsuario(dados_usuario) {
     const { nome, senha, email } = dados_usuario;
     if (!nome || !senha || !email) {
-      throw new APIException(httpStatus.BAD_REQUEST, "Nome ou senha não enviados.");
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "Nome ou senha não enviados."
+      );
     }
   }
 

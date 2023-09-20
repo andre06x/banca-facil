@@ -1,18 +1,20 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import CategoriasRepository from "../repositories/CategoriasRepository.js";
+import TipoPagamentoRepository from "../repositories/TipoPagamentoRepository.js";
 
-class CategoriasService {
-  async criarCategoria(req) {
+class TipoPagamentoService {
+  async criarTipoPagamento(req) {
     try {
-      const dados_categoria = req.body;
-      this.validarDadosCategoria(dados_categoria);
+      const { tipo } = req.body;
+      this.validarTiposPagamento(tipo);
 
-      const categoria = await CategoriasRepository.criarCategoria(dados_categoria);
+      const tipoPagamento = await TipoPagamentoRepository.criarTipoPagamento(
+        tipo
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: tipoPagamento,
       };
     } catch (err) {
       return {
@@ -22,14 +24,22 @@ class CategoriasService {
     }
   }
 
-  async buscarCategoria(req) {
+  async buscarTipoPagamento(req) {
     try {
       const { id } = req.params;
-      const categoria = await CategoriasRepository.buscarCategoria(id);
+      const tipoPagamento = await TipoPagamentoRepository.buscarTipoPagamento(
+        id
+      );
+      if (!tipoPagamento) {
+        throw new APIException(
+          httpStatus.NOT_FOUND,
+          "Tipo pagamento não encontrado"
+        );
+      }
 
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: tipoPagamento,
       };
     } catch (err) {
       return {
@@ -39,13 +49,13 @@ class CategoriasService {
     }
   }
 
-  async buscarTodasCategorias(req) {
+  async buscarTodosTiposPagamentos() {
     try {
-      const { usuarioid } = req.params;
-      const categorias = await CategoriasRepository.buscarTodasCategorias(usuarioid);
+      const tiposPagamentos =
+        await TipoPagamentoRepository.buscarTodosTiposPagamentos();
       return {
         status: httpStatus.SUCCESS,
-        content: categorias,
+        content: tiposPagamentos,
       };
     } catch (err) {
       return {
@@ -55,19 +65,19 @@ class CategoriasService {
     }
   }
 
-  async editarCategoria(req) {
+  async editarTipoPagamento(req) {
     try {
       const { id } = req.params;
-      const obj_categoria = req.body;
       this.validarId(id);
+      const obj_tipo = req.body;
 
-      const categoriaEditado = await CategoriasRepository.editarCategoria(
+      const tipoPagamento = await TipoPagamentoRepository.editarTipoPagamento(
         id,
-        obj_categoria
+        obj_tipo
       );
       return {
         status: httpStatus.SUCCESS,
-        contant: categoriaEditado,
+        content: tipoPagamento,
       };
     } catch (err) {
       return {
@@ -77,14 +87,16 @@ class CategoriasService {
     }
   }
 
-  async excluirCategoria(req) {
+  async excluirTipoPagamento(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const categoria = await CategoriasRepository.excluirCategoria(id);
+      const tipoPagamento = await TipoPagamentoRepository.excluirTipoPagamento(
+        id
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: tipoPagamento,
       };
     } catch (err) {
       return {
@@ -94,13 +106,9 @@ class CategoriasService {
     }
   }
 
-  validarDadosCategoria(dados_categoria) {
-    const { usuario_id, categoria } = dados_categoria;
-    if (!usuario_id || !categoria) {
-      throw new APIException(
-        httpStatus.BAD_REQUEST,
-        "Usuário ou categoria não informado."
-      );
+  validarTiposPagamento(tipo) {
+    if (!tipo) {
+      throw new APIException(httpStatus.BAD_REQUEST, "Tipo não informado.");
     }
   }
 
@@ -111,4 +119,4 @@ class CategoriasService {
   }
 }
 
-export default new CategoriasService();
+export default new TipoPagamentoService();

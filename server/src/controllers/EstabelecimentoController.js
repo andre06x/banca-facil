@@ -15,7 +15,7 @@ class EstabelecimentoController {
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
 
-  async buscarTodosEstabelecimento(req, res) {
+  async buscarTodosEstabelecimentos(req, res) {
     const Estabelecimento =
       await EstabelecimentoService.buscarTodosEstabelecimentos(req);
     return res.status(Estabelecimento.status).json(Estabelecimento);

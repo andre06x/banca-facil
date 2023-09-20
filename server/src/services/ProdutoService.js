@@ -1,20 +1,53 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import TiposPagamentoRepository from "../repositories/TiposPagamentoRepository.js";
+import ProdutoRepository from "../repositories/ProdutoRepository.js";
 
-class TiposPagamentoService {
-  async criarTiposPagamento(req) {
+class ProdutosService {
+  async criarProduto(req) {
     try {
-      const { tipo } = req.body;
-      this.validarTiposPagamento(tipo);
+      const dados_produtos = req.body;
+      this.validarDadosProduto(dados_produtos);
 
-      const tipoPagamento = await TiposPagamentoRepository.criarTiposPagamento(
-        tipo
+      const produto = await ProdutoRepository.criarProduto(dados_produtos);
+      return {
+        status: httpStatus.SUCCESS,
+        content: produto,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
+  async buscarProduto(req) {
+    try {
+      const { id } = req.params;
+      const produto = await ProdutoRepository.buscarProduto(id);
+
+      return {
+        status: httpStatus.SUCCESS,
+        content: produto,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
+  async buscarTodosProdutos(req) {
+    try {
+      const { estabelecimentoid } = req.params;
+      const produtos = await ProdutoRepository.buscarTodosProdutos(
+        estabelecimentoid
       );
       return {
         status: httpStatus.SUCCESS,
-        content: tipoPagamento,
+        content: produtos,
       };
     } catch (err) {
       return {
@@ -24,22 +57,19 @@ class TiposPagamentoService {
     }
   }
 
-  async buscarTipoPagamento(req) {
+  async editarProduto(req) {
     try {
       const { id } = req.params;
-      const tipoPagamento = await TiposPagamentoRepository.buscarTipoPagamento(
-        id
+      const obj_produto = req.body;
+      this.validarId(id);
+
+      const produtoEditado = await ProdutoRepository.editarProduto(
+        id,
+        obj_produto
       );
-      if (!tipoPagamento) {
-        throw new APIException(
-          httpStatus.NOT_FOUND,
-          "Tipo pagamento não encontrado"
-        );
-      }
-
       return {
         status: httpStatus.SUCCESS,
-        content: tipoPagamento,
+        contant: produtoEditado,
       };
     } catch (err) {
       return {
@@ -49,33 +79,14 @@ class TiposPagamentoService {
     }
   }
 
-  async buscarTodosTiposPagamento() {
-    try {
-      const tiposPagamento =
-        await TiposPagamentoRepository.buscarTodosTiposPagamento();
-      return {
-        status: httpStatus.SUCCESS,
-        content: tiposPagamento,
-      };
-    } catch (err) {
-      return {
-        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
-        error: err.message,
-      };
-    }
-  }
-
-  async editarTiposPagamento(req) {
+  async excluirProduto(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const obj_tipo = req.body;
-
-      const tiposPagamento =
-        await TiposPagamentoRepository.editarTiposPagamento(id, obj_tipo);
+      const produto = await ProdutoRepository.excluirProduto(id);
       return {
         status: httpStatus.SUCCESS,
-        content: tiposPagamento,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -85,27 +96,13 @@ class TiposPagamentoService {
     }
   }
 
-  async excluirTiposPagamento(req) {
-    try {
-      const { id } = req.params;
-      this.validarId(id);
-      const tipoPagamento =
-        await TiposPagamentoRepository.excluirTiposPagamento(id);
-      return {
-        status: httpStatus.SUCCESS,
-        content: tipoPagamento,
-      };
-    } catch (err) {
-      return {
-        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
-        error: err.message,
-      };
-    }
-  }
-
-  validarTiposPagamento(tipo) {
-    if (!tipo) {
-      throw new APIException(httpStatus.BAD_REQUEST, "Tipo não informado.");
+  validarDadosProduto(dados_produtos) {
+    const { nome, valor, quantidade_disponivel } = dados_produtos;
+    if (!nome || !valor || !quantidade_disponivel) {
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "Nome, valor ou quantidade disponível não informado."
+      );
     }
   }
 
@@ -116,4 +113,4 @@ class TiposPagamentoService {
   }
 }
 
-export default new TiposPagamentoService();
+export default new ProdutosService();

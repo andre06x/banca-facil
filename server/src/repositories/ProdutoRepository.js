@@ -1,11 +1,11 @@
 import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
-import Produtos from "../models/Produtos.js";
+import Produto from "../models/Produto.js";
 
-class ProdutosRepository {
+class ProdutoRepository {
   async criarProduto(dados_produto) {
     try {
-      const produtos = await Produtos.create(dados_produto);
+      const produtos = await Produto.create(dados_produto);
       return produtos.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -14,7 +14,7 @@ class ProdutosRepository {
 
   async buscarProduto(id) {
     try {
-      const produto = await Produtos.findOne({ where: { id } });
+      const produto = await Produto.findOne({ where: { id } });
       return produto.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -23,7 +23,7 @@ class ProdutosRepository {
 
   async buscarTodosProdutos(id) {
     try {
-      const produtos = await Produtos.findAll({
+      const produtos = await Produto.findAll({
         where: { estabelecimento_id: id },
       });
       return produtos;
@@ -34,7 +34,7 @@ class ProdutosRepository {
 
   async editarProduto(id, obj_produto) {
     try {
-      const data = await Produtos.update(obj_produto, { where: { id } });
+      const data = await Produto.update(obj_produto, { where: { id } });
       return data;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -43,7 +43,7 @@ class ProdutosRepository {
 
   async excluirProduto(id) {
     try {
-      await Produtos.destroy({ where: { id } });
+      await Produto.destroy({ where: { id } });
       return "Produto excluído com sucesso!";
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -51,4 +51,4 @@ class ProdutosRepository {
   }
 }
 
-export default new ProdutosRepository();
+export default new ProdutoRepository();

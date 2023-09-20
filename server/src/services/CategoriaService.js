@@ -1,18 +1,20 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import ProdutosRepository from "../repositories/ProdutoRepository.js";
+import CategoriaRepository from "../repositories/CategoriaRepository.js";
 
-class ProdutosService {
-  async criarProduto(req) {
+class CategoriaService {
+  async criarCategoria(req) {
     try {
-      const dados_produtos = req.body;
-      this.validarDadosProduto(dados_produtos);
+      const dados_categoria = req.body;
+      this.validarDadosCategoria(dados_categoria);
 
-      const produto = await ProdutosRepository.criarProduto(dados_produtos);
+      const categoria = await CategoriaRepository.criarCategoria(
+        dados_categoria
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: produto,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -22,14 +24,14 @@ class ProdutosService {
     }
   }
 
-  async buscarProduto(req) {
+  async buscarCategoria(req) {
     try {
       const { id } = req.params;
-      const produto = await ProdutosRepository.buscarProduto(id);
+      const categoria = await CategoriaRepository.buscarCategoria(id);
 
       return {
         status: httpStatus.SUCCESS,
-        content: produto,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -39,13 +41,15 @@ class ProdutosService {
     }
   }
 
-  async buscarTodosProdutos(req) {
+  async buscarTodasCategorias(req) {
     try {
-      const { estabelecimentoid } = req.params;
-      const produtos = await ProdutosRepository.buscarTodosProdutos(estabelecimentoid);
+      const { usuarioid } = req.params;
+      const categorias = await CategoriaRepository.buscarTodasCategorias(
+        usuarioid
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: produtos,
+        content: categorias,
       };
     } catch (err) {
       return {
@@ -55,16 +59,19 @@ class ProdutosService {
     }
   }
 
-  async editarProduto(req) {
+  async editarCategoria(req) {
     try {
       const { id } = req.params;
-      const obj_produto = req.body;
+      const obj_categoria = req.body;
       this.validarId(id);
 
-      const produtoEditado = await ProdutosRepository.editarProduto(id, obj_produto);
+      const categoriaEditado = await CategoriaRepository.editarCategoria(
+        id,
+        obj_categoria
+      );
       return {
         status: httpStatus.SUCCESS,
-        contant: produtoEditado,
+        contant: categoriaEditado,
       };
     } catch (err) {
       return {
@@ -74,14 +81,14 @@ class ProdutosService {
     }
   }
 
-  async excluirProduto(req) {
+  async excluirCategoria(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const produto = await ProdutosRepository.excluirProduto(id);
+      const categoria = await CategoriaRepository.excluirCategoria(id);
       return {
         status: httpStatus.SUCCESS,
-        content: produto,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -91,12 +98,12 @@ class ProdutosService {
     }
   }
 
-  validarDadosProduto(dados_produtos) {
-    const { nome, valor, quantidade_disponivel } = dados_produtos;
-    if (!nome || !valor || !quantidade_disponivel) {
+  validarDadosCategoria(dados_categoria) {
+    const { usuario_id, categoria } = dados_categoria;
+    if (!usuario_id || !categoria) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Nome, valor ou quantidade disponível não informado."
+        "Usuário ou categoria não informado."
       );
     }
   }
@@ -108,4 +115,4 @@ class ProdutosService {
   }
 }
 
-export default new ProdutosService();
+export default new CategoriaService();
