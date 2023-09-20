@@ -3,7 +3,6 @@ import * as db from "./src/config/db/initialData.js";
 
 import cors from "cors";
 import { router } from "./routes.js";
-import { routerv2 } from "./routesv2.js";
 
 const app = express();
 const env = process.env;
@@ -20,7 +19,6 @@ app.get("/api/status", (_, res) => {
   };
   return res.status(200).json(status);
 });
-app.use(routerv2);
 app.use(router);
 
 app.listen(PORT, () => {
