@@ -5,6 +5,7 @@ import FuncionariosEstabelecimento from "../../models/FuncionariosEstabeleciment
 import Categorias from "../../models/Categorias.js";
 import TiposPagamento from "../../models/TiposPagamento.js";
 import Produtos from "../../models/Produtos.js";
+import Taxa from "../../models/Taxa.js";
 
 const senha = await bcrypt.hash("123456", 10);
 
@@ -40,6 +41,7 @@ const produtos = [
 
 export async function createInitialData() {
   try {
+    await Taxa.sync({ alter: true });
     await Usuario.sync({ alter: true });
     await Estabelecimento.sync({ alter: true });
     await FuncionariosEstabelecimento.sync({ alter: true });
