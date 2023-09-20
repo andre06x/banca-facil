@@ -1,17 +1,17 @@
 import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
 import Estabelecimento from "./Estabelecimento.js";
-import Categorias from "./Categorias.js";
+import Categoria from "./Categoria.js";
+import Taxa from "./Taxa.js";
 
-const Produtos = sequelize.define(
-  "produtos",
+const Produto = sequelize.define(
+  "produto",
   {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-
     nome: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -25,13 +25,14 @@ const Produtos = sequelize.define(
     quantidade_disponivel: {
       type: Sequelize.INTEGER,
     },
-    taxas_id: {
-      type: Sequelize.UUID,
-    },
   },
   { underscored: true, freezeTableName: true }
 );
 
-Produtos.belongsTo(Estabelecimento, { foreignKey: "estabelecimento_id" });
-Produtos.belongsTo(Categorias, { foreignKey: "categoria_id" });
-export default Produtos;
+Produto.belongsTo(Estabelecimento, {
+  foreignKey: "estabelecimento_id",
+  allowNull: false,
+});
+Produto.belongsTo(Categoria, { foreignKey: "categoria_id", allowNull: false });
+Produto.belongsTo(Taxa, { foreignKey: "taxa_id", allowNull: true });
+export default Produto;

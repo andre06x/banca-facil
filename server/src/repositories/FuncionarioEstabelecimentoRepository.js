@@ -1,11 +1,11 @@
 import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
-import FuncionariosEstabelecimento from "../models/FuncionariosEstabelecimento.js";
+import FuncionarioEstabelecimento from "../models/FuncionarioEstabelecimento.js";
 import { Op } from "sequelize";
 import Usuario from "../models/Usuario.js";
 import Estabelecimento from "../models/Estabelecimento.js";
 
-class FuncionariosEstabelecimentoRepository {
+class FuncionarioEstabelecimentoRepository {
   async criarVinculo(dados) {
     try {
       const { usuario_id, estabelecimento_id } = dados;
@@ -13,7 +13,7 @@ class FuncionariosEstabelecimentoRepository {
         usuario_id,
         estabelecimento_id,
       };
-      const estabelecimento = await FuncionariosEstabelecimento.create(data);
+      const estabelecimento = await FuncionarioEstabelecimento.create(data);
       return estabelecimento.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -21,7 +21,7 @@ class FuncionariosEstabelecimentoRepository {
   }
   async buscarEstabelecimentoFuncionario(id) {
     try {
-      const estabelecimentos = await FuncionariosEstabelecimento.findAll({
+      const estabelecimentos = await FuncionarioEstabelecimento.findAll({
         include: [
           {
             model: Estabelecimento,
@@ -40,7 +40,7 @@ class FuncionariosEstabelecimentoRepository {
   }
   async buscarFuncionarioEstabelecimento(id) {
     try {
-      const estabelecimentos = await FuncionariosEstabelecimento.findAll({
+      const estabelecimentos = await FuncionarioEstabelecimento.findAll({
         attributes: ["estabelecimento_id", "usuario_id"],
         include: [
           {
@@ -84,7 +84,7 @@ class FuncionariosEstabelecimentoRepository {
 
   async excluirVinculo(id) {
     try {
-      await FuncionariosEstabelecimento.destroy({ where: { id } });
+      await FuncionarioEstabelecimento.destroy({ where: { id } });
       return "Vínculo Funcionário Estabelecimento excluído com sucesso!";
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -92,4 +92,4 @@ class FuncionariosEstabelecimentoRepository {
   }
 }
 
-export default new FuncionariosEstabelecimentoRepository();
+export default new FuncionarioEstabelecimentoRepository();

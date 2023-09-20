@@ -21,8 +21,8 @@ class UsuarioController {
     return res.status(funcionario.status).json(funcionario);
   }
 
-  async buscarTodosUsuario(req, res) {
-    const usuario = await UsuarioService.buscarTodosUsuario(req);
+  async buscarTodosUsuarios(req, res) {
+    const usuario = await UsuarioService.buscarTodosUsuarios(req);
     return res.status(usuario.status).json(usuario);
   }
 

@@ -1,6 +1,6 @@
 import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
-import Categorias from "../models/Categorias.js";
+import Categoria from "../models/Categoria.js";
 
 class CategoriaRepository {
   async criarCategoria(dados_categoria) {
@@ -10,8 +10,8 @@ class CategoriaRepository {
         usuario_id,
         categoria,
       };
-      const categorias = await Categorias.create(data);
-      return categorias.dataValues;
+      const categoriaData = await Categoria.create(data);
+      return categoriaData.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -19,7 +19,7 @@ class CategoriaRepository {
 
   async buscarCategoria(id) {
     try {
-      const categoria = await Categorias.findOne({ where: { id } });
+      const categoria = await Categoria.findOne({ where: { id } });
       return categoria.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -28,7 +28,7 @@ class CategoriaRepository {
 
   async buscarTodasCategorias(id) {
     try {
-      const categorias = await Categorias.findAll({
+      const categorias = await Categoria.findAll({
         where: { usuario_id: id },
       });
       return categorias;
@@ -39,7 +39,7 @@ class CategoriaRepository {
 
   async editarCategoria(id, obj_categoria) {
     try {
-      const data = await Categorias.update(obj_categoria, { where: { id } });
+      const data = await Categoria.update(obj_categoria, { where: { id } });
       return data;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -48,7 +48,7 @@ class CategoriaRepository {
 
   async excluirCategoria(id) {
     try {
-      await Categorias.destroy({ where: { id } });
+      await Categoria.destroy({ where: { id } });
       return "Estabelecimento excluído com sucesso!";
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);

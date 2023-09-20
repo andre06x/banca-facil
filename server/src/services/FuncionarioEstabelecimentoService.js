@@ -1,17 +1,16 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import FuncionariosEstabelecimentoRepository from "../repositories/FuncionariosEstabelecimentoRepository.js";
+import FuncionarioEstabelecimentoRepository from "../repositories/FuncionarioEstabelecimentoRepository.js";
 
-class FuncionariosEstabelecimentoService {
+class FuncionarioEstabelecimentoService {
   async vincularFuncionarioEstabelecimento(req) {
     try {
       const dados = req.body;
       this.validarDadosEstabelecimento(dados);
 
-      const estabelecimento = await FuncionariosEstabelecimentoRepository.criarVinculo(
-        dados
-      );
+      const estabelecimento =
+        await FuncionarioEstabelecimentoRepository.criarVinculo(dados);
       return {
         status: httpStatus.SUCCESS,
         content: estabelecimento,
@@ -29,7 +28,9 @@ class FuncionariosEstabelecimentoService {
       this.validarId(id);
 
       const estabelecimento =
-        await FuncionariosEstabelecimentoRepository.buscarFuncionarioEstabelecimento(id);
+        await FuncionarioEstabelecimentoRepository.buscarFuncionarioEstabelecimento(
+          id
+        );
       return {
         status: httpStatus.SUCCESS,
         content: estabelecimento,
@@ -48,7 +49,9 @@ class FuncionariosEstabelecimentoService {
       this.validarId(id);
 
       const estabelecimento =
-        await FuncionariosEstabelecimentoRepository.buscarEstabelecimentoFuncionario(id);
+        await FuncionarioEstabelecimentoRepository.buscarEstabelecimentoFuncionario(
+          id
+        );
       return {
         status: httpStatus.SUCCESS,
         content: estabelecimento,
@@ -65,9 +68,8 @@ class FuncionariosEstabelecimentoService {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const estabelecimento = await FuncionariosEstabelecimentoRepository.excluirVinculo(
-        id
-      );
+      const estabelecimento =
+        await FuncionarioEstabelecimentoRepository.excluirVinculo(id);
       return {
         status: httpStatus.SUCCESS,
         content: estabelecimento,
@@ -97,4 +99,4 @@ class FuncionariosEstabelecimentoService {
   }
 }
 
-export default new FuncionariosEstabelecimentoService();
+export default new FuncionarioEstabelecimentoService();

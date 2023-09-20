@@ -1,11 +1,11 @@
 import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
-import TiposPagamento from "../models/TiposPagamento.js";
+import TipoPagamento from "../models/TipoPagamento.js";
 
-class TiposPagamentoRepository {
-  async criarTiposPagamento(tipo) {
+class TipoPagamentoRepository {
+  async criarTipoPagamento(tipo) {
     try {
-      const tipoPagamento = await TiposPagamento.create({ tipo });
+      const tipoPagamento = await TipoPagamento.create({ tipo });
       return tipoPagamento.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -14,7 +14,7 @@ class TiposPagamentoRepository {
 
   async buscarTipoPagamento(id) {
     try {
-      const buscarTipoPagamento = await TiposPagamento.findOne({
+      const buscarTipoPagamento = await TipoPagamento.findOne({
         where: { id },
       });
       return buscarTipoPagamento;
@@ -23,18 +23,18 @@ class TiposPagamentoRepository {
     }
   }
 
-  async buscarTodosTiposPagamento() {
+  async buscarTodosTiposPagamentos() {
     try {
-      const buscarTiposPagamento = await TiposPagamento.findAll();
+      const buscarTiposPagamento = await TipoPagamento.findAll();
       return buscarTiposPagamento;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
   }
 
-  async editarTiposPagamento(id, obj_tipo) {
+  async editarTipoPagamento(id, obj_tipo) {
     try {
-      const tipoPagamentoEditado = await TiposPagamento.update(obj_tipo, {
+      const tipoPagamentoEditado = await TipoPagamento.update(obj_tipo, {
         where: { id },
       });
       return tipoPagamentoEditado;
@@ -43,9 +43,9 @@ class TiposPagamentoRepository {
     }
   }
 
-  async excluirTiposPagamento(id) {
+  async excluirTipoPagamento(id) {
     try {
-      await TiposPagamento.destroy({ where: { id } });
+      await TipoPagamento.destroy({ where: { id } });
       return "Tipo pagamento excluído!";
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -53,4 +53,4 @@ class TiposPagamentoRepository {
   }
 }
 
-export default new TiposPagamentoRepository();
+export default new TipoPagamentoRepository();

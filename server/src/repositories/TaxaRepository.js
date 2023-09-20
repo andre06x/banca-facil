@@ -22,9 +22,9 @@ class TaxaRepository {
     }
   }
 
-  async buscarTodasTaxas() {
+  async buscarTodasTaxas(id) {
     try {
-      const taxas = await Taxa.findAll();
+      const taxas = await Taxa.findAll({ where: { usuario_id: id } });
       return taxas;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);

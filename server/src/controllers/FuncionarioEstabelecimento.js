@@ -1,30 +1,36 @@
-import FuncionariosEstabelecimentoService from "../services/FuncionariosEstabelecimentoService.js";
+import FuncionarioEstabelecimentoService from "../services/FuncionarioEstabelecimentoService.js";
 
-class FuncionariosEstabelecimentoController {
+class FuncionarioEstabelecimentoController {
   async criarFuncionariosEstabelecimento(req, res) {
     const Estabelecimento =
-      await FuncionariosEstabelecimentoService.vincularFuncionarioEstabelecimento(req);
+      await FuncionarioEstabelecimentoService.vincularFuncionarioEstabelecimento(
+        req
+      );
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
   async buscarFuncionariosEstabelecimento(req, res) {
     const Estabelecimento =
-      await FuncionariosEstabelecimentoService.buscarFuncionarioEstabelecimento(req);
+      await FuncionarioEstabelecimentoService.buscarFuncionarioEstabelecimento(
+        req
+      );
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
 
   async buscarEstabelecimentoFuncionario(req, res) {
     const Estabelecimento =
-      await FuncionariosEstabelecimentoService.buscarEstabelecimentoFuncionario(req);
+      await FuncionarioEstabelecimentoService.buscarEstabelecimentoFuncionario(
+        req
+      );
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
 
   async excluirFuncionariosEstabelecimento(req, res) {
     const Estabelecimento =
-      await FuncionariosEstabelecimentoService.excluirVicnuloFuncionarioEstabelecimento(
+      await FuncionarioEstabelecimentoService.excluirVicnuloFuncionarioEstabelecimento(
         req
       );
     return res.status(Estabelecimento.status).json(Estabelecimento);
   }
 }
 
-export default new FuncionariosEstabelecimentoController();
+export default new FuncionarioEstabelecimentoController();

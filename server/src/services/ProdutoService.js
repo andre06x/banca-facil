@@ -1,18 +1,18 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import CategoriasRepository from "../repositories/CategoriasRepository.js";
+import ProdutoRepository from "../repositories/ProdutoRepository.js";
 
-class CategoriasService {
-  async criarCategoria(req) {
+class ProdutosService {
+  async criarProduto(req) {
     try {
-      const dados_categoria = req.body;
-      this.validarDadosCategoria(dados_categoria);
+      const dados_produtos = req.body;
+      this.validarDadosProduto(dados_produtos);
 
-      const categoria = await CategoriasRepository.criarCategoria(dados_categoria);
+      const produto = await ProdutoRepository.criarProduto(dados_produtos);
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -22,14 +22,14 @@ class CategoriasService {
     }
   }
 
-  async buscarCategoria(req) {
+  async buscarProduto(req) {
     try {
       const { id } = req.params;
-      const categoria = await CategoriasRepository.buscarCategoria(id);
+      const produto = await ProdutoRepository.buscarProduto(id);
 
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -39,35 +39,15 @@ class CategoriasService {
     }
   }
 
-  async buscarTodasCategorias(req) {
+  async buscarTodosProdutos(req) {
     try {
-      const { usuarioid } = req.params;
-      const categorias = await CategoriasRepository.buscarTodasCategorias(usuarioid);
-      return {
-        status: httpStatus.SUCCESS,
-        content: categorias,
-      };
-    } catch (err) {
-      return {
-        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
-        error: err.message,
-      };
-    }
-  }
-
-  async editarCategoria(req) {
-    try {
-      const { id } = req.params;
-      const obj_categoria = req.body;
-      this.validarId(id);
-
-      const categoriaEditado = await CategoriasRepository.editarCategoria(
-        id,
-        obj_categoria
+      const { estabelecimentoid } = req.params;
+      const produtos = await ProdutoRepository.buscarTodosProdutos(
+        estabelecimentoid
       );
       return {
         status: httpStatus.SUCCESS,
-        contant: categoriaEditado,
+        content: produtos,
       };
     } catch (err) {
       return {
@@ -77,14 +57,36 @@ class CategoriasService {
     }
   }
 
-  async excluirCategoria(req) {
+  async editarProduto(req) {
+    try {
+      const { id } = req.params;
+      const obj_produto = req.body;
+      this.validarId(id);
+
+      const produtoEditado = await ProdutoRepository.editarProduto(
+        id,
+        obj_produto
+      );
+      return {
+        status: httpStatus.SUCCESS,
+        contant: produtoEditado,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
+  async excluirProduto(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const categoria = await CategoriasRepository.excluirCategoria(id);
+      const produto = await ProdutoRepository.excluirProduto(id);
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -94,12 +96,12 @@ class CategoriasService {
     }
   }
 
-  validarDadosCategoria(dados_categoria) {
-    const { usuario_id, categoria } = dados_categoria;
-    if (!usuario_id || !categoria) {
+  validarDadosProduto(dados_produtos) {
+    const { nome, valor, quantidade_disponivel } = dados_produtos;
+    if (!nome || !valor || !quantidade_disponivel) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Usuário ou categoria não informado."
+        "Nome, valor ou quantidade disponível não informado."
       );
     }
   }
@@ -111,4 +113,4 @@ class CategoriasService {
   }
 }
 
-export default new CategoriasService();
+export default new ProdutosService();
