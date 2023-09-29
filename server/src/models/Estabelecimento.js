@@ -29,5 +29,8 @@ const Estabelecimento = sequelize.define(
   { underscored: true, freezeTableName: true }
 );
 
-Estabelecimento.belongsTo(Usuario, { foreignKey: "usuario_id" });
+Estabelecimento.belongsTo(Usuario, {
+  foreignKey: "usuario_id",
+  allowNull: false,
+});
 export default Estabelecimento;
