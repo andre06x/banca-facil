@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import ProdutoController from "../controllers/ProdutoController.js";
 
 const RotaProduto = new Router();
