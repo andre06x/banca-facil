@@ -4,6 +4,7 @@ import FuncionarioEstabelecimento from "../models/FuncionarioEstabelecimento.js"
 import { Op } from "sequelize";
 import Usuario from "../models/Usuario.js";
 import Estabelecimento from "../models/Estabelecimento.js";
+import VendaStatus from "../models/VendaStatus.js";
 
 class FuncionarioEstabelecimentoRepository {
   async criarVinculo(dados) {
@@ -22,15 +23,24 @@ class FuncionarioEstabelecimentoRepository {
   async buscarEstabelecimentoFuncionario(id) {
     try {
       const estabelecimentos = await FuncionarioEstabelecimento.findAll({
+        attributes: [
+          "estabelecimento.id",
+          "estabelecimento.cidade",
+          "estabelecimento.lat",
+          "estabelecimento.lon",
+          "estabelecimento.nome_estabelecimento",
+        ],
         include: [
           {
             model: Estabelecimento,
-            attributes: ["cidade", "lat", "lon", "nome_estabelecimento"],
+            attributes: [],
           },
           {
             model: Usuario,
+            attributes: [],
           },
         ],
+        raw: true,
         where: { usuario_id: id },
       });
       return estabelecimentos;
