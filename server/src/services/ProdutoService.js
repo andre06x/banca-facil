@@ -8,6 +8,7 @@ class ProdutosService {
     try {
       const dados_produtos = req.body;
       this.validarDadosProduto(dados_produtos);
+      await this.validarProdutoExistente(dados_produtos);
 
       const produto = await ProdutoRepository.criarProduto(dados_produtos);
       return {
@@ -93,6 +94,18 @@ class ProdutosService {
         status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
         error: err.message,
       };
+    }
+  }
+
+  async validarProdutoExistente(dados_produtos) {
+    const produtoExistente = await ProdutoRepository.validarProdutoExistente(
+      dados_produtos
+    );
+    if (produtoExistente) {
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "O produto informado já existe em nossa base de dados. Por favor, informe um novo produto."
+      );
     }
   }
 
