@@ -11,6 +11,7 @@ class UsuarioService {
     try {
       const dados_usuario = req.body;
       this.validarDadosUsuario(dados_usuario);
+      await this.validarUsuarioExistente(dados_usuario.email);
 
       const usuario = await UsuarioRepository.criarUsuario(dados_usuario);
       return {
@@ -43,13 +44,15 @@ class UsuarioService {
         admin: usuario.admin,
       };
 
-      const accessToken = jwt.sign({ auth }, secrets.API_SECRET, {
+      const data = {};
+      data["token"] = jwt.sign({ auth }, secrets.API_SECRET, {
         expiresIn: "1d",
       });
 
+      data["usuario"] = usuario.id;
       return {
         status: httpStatus.SUCCESS,
-        accessToken,
+        data,
       };
     } catch (err) {
       return {
@@ -155,7 +158,7 @@ class UsuarioService {
     if (!nome || !senha || !email) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Nome ou senha não enviados."
+        "Nome, senha ou email não enviados."
       );
     }
   }
@@ -163,6 +166,18 @@ class UsuarioService {
   validarId(id) {
     if (!id) {
       throw new APIException(httpStatus.BAD_REQUEST, "Faltando id.");
+    }
+  }
+
+  async validarUsuarioExistente(email) {
+    const usuarioExistente = await UsuarioRepository.validarUsuarioExistente(
+      email
+    );
+    if (usuarioExistente) {
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "O email informado já existe em nossa base de dados. Por favor, informe um email válido."
+      );
     }
   }
 
