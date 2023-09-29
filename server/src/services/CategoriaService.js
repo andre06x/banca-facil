@@ -7,7 +7,9 @@ class CategoriaService {
   async criarCategoria(req) {
     try {
       const dados_categoria = req.body;
+
       this.validarDadosCategoria(dados_categoria);
+      await this.validarCategoriaExistente(dados_categoria);
 
       const categoria = await CategoriaRepository.criarCategoria(
         dados_categoria
@@ -95,6 +97,16 @@ class CategoriaService {
         status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
         error: err.message,
       };
+    }
+  }
+  async validarCategoriaExistente(dados_categoria) {
+    const categoriaExistente =
+      await CategoriaRepository.validarCategoriaExistente(dados_categoria);
+    if (categoriaExistente) {
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "Categoria informada já existe em nossa base de dados."
+      );
     }
   }
 
