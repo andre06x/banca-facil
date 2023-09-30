@@ -1,22 +1,20 @@
 import { APIException } from "../exception/APIException.js";
 
 import * as httpStatus from "../config/constants/httpStatus.js";
-import CategoriaRepository from "../repositories/CategoriaRepository.js";
+import ProdutoTaxaRepository from "../repositories/ProdutoTaxaRepository.js";
 
-class CategoriaService {
-  async criarCategoria(req) {
+class ProdutoTaxaService {
+  async criarProdutoTaxa(req) {
     try {
-      const dados_categoria = req.body;
+      const dados_produto_taxa = req.body;
+      this.validarDadosProduto(dados_produto_taxa);
 
-      this.validarDadosCategoria(dados_categoria);
-      await this.validarCategoriaExistente(dados_categoria);
-
-      const categoria = await CategoriaRepository.criarCategoria(
-        dados_categoria
+      const produto_taxa = await ProdutoTaxaRepository.criarProdutoTaxa(
+        dados_produto_taxa
       );
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto_taxa,
       };
     } catch (err) {
       return {
@@ -26,14 +24,14 @@ class CategoriaService {
     }
   }
 
-  async buscarCategoria(req) {
+  async buscarProdutoTaxa(req) {
     try {
       const { id } = req.params;
-      const categoria = await CategoriaRepository.buscarCategoria(id);
+      const produto = await ProdutoTaxaRepository.buscarProdutoTaxa(id);
 
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -43,15 +41,15 @@ class CategoriaService {
     }
   }
 
-  async buscarTodasCategorias(req) {
+  async buscarTodosProdutos(req) {
     try {
-      const { usuarioid } = req.params;
-      const categorias = await CategoriaRepository.buscarTodasCategorias(
-        usuarioid
+      const { estabelecimentoid } = req.params;
+      const produtos = await ProdutoTaxaRepository.buscarTodosProdutos(
+        estabelecimentoid
       );
       return {
         status: httpStatus.SUCCESS,
-        content: categorias,
+        content: produtos,
       };
     } catch (err) {
       return {
@@ -61,19 +59,19 @@ class CategoriaService {
     }
   }
 
-  async editarCategoria(req) {
+  async editarProdutoTaxa(req) {
     try {
       const { id } = req.params;
-      const obj_categoria = req.body;
+      const obj_produto = req.body;
       this.validarId(id);
 
-      const categoriaEditado = await CategoriaRepository.editarCategoria(
+      const produtoEditado = await ProdutoTaxaRepository.editarProdutoTaxa(
         id,
-        obj_categoria
+        obj_produto
       );
       return {
         status: httpStatus.SUCCESS,
-        contant: categoriaEditado,
+        contant: produtoEditado,
       };
     } catch (err) {
       return {
@@ -83,14 +81,14 @@ class CategoriaService {
     }
   }
 
-  async excluirCategoria(req) {
+  async excluirProdutoTaxa(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const categoria = await CategoriaRepository.excluirCategoria(id);
+      const produto = await ProdutoTaxaRepository.excluirProdutoTaxa(id);
       return {
         status: httpStatus.SUCCESS,
-        content: categoria,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -99,23 +97,13 @@ class CategoriaService {
       };
     }
   }
-  async validarCategoriaExistente(dados_categoria) {
-    const categoriaExistente =
-      await CategoriaRepository.validarCategoriaExistente(dados_categoria);
-    if (categoriaExistente) {
-      throw new APIException(
-        httpStatus.BAD_REQUEST,
-        "Categoria informada já existe em nossa base de dados."
-      );
-    }
-  }
 
-  validarDadosCategoria(dados_categoria) {
-    const { usuario_id, categoria } = dados_categoria;
-    if (!usuario_id || !categoria) {
+  validarDadosProduto(dados_produtos) {
+    const { taxa_id, produto_id } = dados_produtos;
+    if (!taxa_id || !produto_id) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Usuário ou categoria não informado."
+        "TaxaId ou ProdutoId faltando."
       );
     }
   }
@@ -127,4 +115,4 @@ class CategoriaService {
   }
 }
 
-export default new CategoriaService();
+export default new ProdutoTaxaService();

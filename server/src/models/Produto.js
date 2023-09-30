@@ -2,7 +2,7 @@ import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
 import Estabelecimento from "./Estabelecimento.js";
 import Categoria from "./Categoria.js";
-import Taxa from "./Taxa.js";
+import ProdutoTaxa from "./ProdutoTaxa.js";
 
 const Produto = sequelize.define(
   "produto",
@@ -17,7 +17,7 @@ const Produto = sequelize.define(
       allowNull: false,
     },
     foto: {
-      type: Sequelize.TEXT,
+      type: Sequelize.BLOB,
     },
     valor: {
       type: Sequelize.DECIMAL(10, 2),
@@ -29,10 +29,10 @@ const Produto = sequelize.define(
   { underscored: true, freezeTableName: true }
 );
 
+Produto.hasMany(ProdutoTaxa, { foreignKey: "produto_id" });
 Produto.belongsTo(Estabelecimento, {
   foreignKey: "estabelecimento_id",
   allowNull: false,
 });
 Produto.belongsTo(Categoria, { foreignKey: "categoria_id", allowNull: false });
-Produto.belongsTo(Taxa, { foreignKey: "taxa_id", allowNull: true });
 export default Produto;

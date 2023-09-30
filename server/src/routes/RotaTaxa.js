@@ -6,7 +6,7 @@ const RotaTaxa = new Router();
 RotaTaxa.post("/api/taxa", TaxaController.criarTaxa);
 
 /* Buscar todas as taxas a partir de um usuario  */
-RotaTaxa.get("/api/taxa/:usuarioid", TaxaController.buscarTodasTaxas);
+RotaTaxa.get("/api/todas-taxas/:usuarioid", TaxaController.buscarTodasTaxas);
 RotaTaxa.delete("/api/taxa/:id", TaxaController.excluirTaxa);
 
 RotaTaxa.get("/api/taxa/:id", TaxaController.buscarTaxa);

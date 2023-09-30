@@ -15,7 +15,10 @@ export default async (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      throw new APIException(httpStatus.UNAUTHORIZED, "Token de acesso não informado.");
+      throw new APIException(
+        httpStatus.UNAUTHORIZED,
+        "Token de acesso não informado."
+      );
     }
 
     let accessToken = authorization;

@@ -6,7 +6,9 @@ class TaxaService {
   async criarTaxa(req) {
     try {
       const obj_taxa = req.body;
+
       this.validarTaxa(obj_taxa);
+      await this.validarTaxaExistente(obj_taxa);
 
       const taxaCriada = await TaxaRepository.criarTaxa(obj_taxa);
       return {
@@ -42,7 +44,7 @@ class TaxaService {
   async buscarTodasTaxas(req) {
     try {
       const { usuarioid } = req.params;
-      this.validarId(id);
+      this.validarId(usuarioid);
       const todasTaxas = await TaxaRepository.buscarTodasTaxas(usuarioid);
 
       return {
@@ -92,6 +94,15 @@ class TaxaService {
     }
   }
 
+  async validarTaxaExistente(obj_taxa) {
+    const taxaExistente = await TaxaRepository.validarTaxaExistente(obj_taxa);
+    if (taxaExistente) {
+      throw new APIException(
+        httpStatus.BAD_REQUEST,
+        "O nome da taxa já existente. Por favor, informe um novo nome."
+      );
+    }
+  }
   validarTaxa(obj_taxa) {
     if (
       !obj_taxa ||
@@ -102,7 +113,7 @@ class TaxaService {
     ) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Dados da taxa incompletos."
+        "Dados para a criação da taxa incompletos."
       );
     }
   }

@@ -17,6 +17,17 @@ class CategoriaRepository {
     }
   }
 
+  async validarCategoriaExistente(dados_categoria) {
+    try {
+      const { usuario_id, categoria } = dados_categoria;
+      const verificarCategoria = await Categoria.findOne({
+        where: { usuario_id, categoria },
+      });
+      return verificarCategoria?.dataValues;
+    } catch (err) {
+      throw new APIException(httpStatus.BAD_REQUEST, err.message);
+    }
+  }
   async buscarCategoria(id) {
     try {
       const categoria = await Categoria.findOne({ where: { id } });

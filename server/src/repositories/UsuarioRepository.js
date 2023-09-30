@@ -25,9 +25,16 @@ class UsuarioRepository {
     }
   }
 
+  async validarUsuarioExistente(email) {
+    try {
+      const usuario = await Usuario.findOne({ where: { email } });
+      return usuario?.dataValues;
+    } catch (err) {
+      throw new APIException(httpStatus.BAD_REQUEST, err.message);
+    }
+  }
   async buscarUsuario(id) {
     try {
-      log(id);
       const usuario = await Usuario.findOne({ where: { id } });
       return usuario.dataValues;
     } catch (err) {
