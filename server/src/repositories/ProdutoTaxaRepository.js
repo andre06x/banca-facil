@@ -2,36 +2,22 @@ import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
 import Produto from "../models/Produto.js";
 import Taxa from "../models/Taxa.js";
-import TipoPagamento from "../models/TipoPagamento.js";
 import ProdutoTaxa from "../models/ProdutoTaxa.js";
-import Estabelecimento from "../models/Estabelecimento.js";
 
-class ProdutoRepository {
-  async criarProduto(dados_produto) {
+class ProdutoTaxaRepository {
+  async criarProdutoTaxa(dados_produto_taxa) {
     try {
-      const produtos = await Produto.create(dados_produto);
-      return produtos.dataValues;
+      const produto_taxa = await ProdutoTaxa.create(dados_produto_taxa);
+      return produto_taxa.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
   }
 
-  async validarProdutoExistente(dados_produto) {
+  async buscarProdutoTaxa(id) {
     try {
-      const { estabelecimento_id, nome } = dados_produto;
-      const produto = await Produto.findOne({
-        where: { estabelecimento_id, nome },
-      });
-      return produto?.dataValues;
-    } catch (err) {
-      throw new APIException(httpStatus.BAD_REQUEST, err.message);
-    }
-  }
-
-  async buscarProduto(id) {
-    try {
-      const produto = await Produto.findOne({ where: { id } });
-      return produto.dataValues;
+      const produto_taxas = await ProdutoTaxa.findOne({ where: { id } });
+      return produto_taxas.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -72,18 +58,20 @@ class ProdutoRepository {
     }
   }
 
-  async editarProduto(id, obj_produto) {
+  async editarProdutoTaxa(id, obj_produto_taxa) {
     try {
-      const data = await Produto.update(obj_produto, { where: { id } });
+      const data = await ProdutoTaxa.update(obj_produto_taxa, {
+        where: { id },
+      });
       return data;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
   }
 
-  async excluirProduto(id) {
+  async excluirProdutoTaxa(id) {
     try {
-      await Produto.destroy({ where: { id } });
+      await ProdutoTaxa.destroy({ where: { id } });
       return "Produto excluído com sucesso!";
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -91,4 +79,4 @@ class ProdutoRepository {
   }
 }
 
-export default new ProdutoRepository();
+export default new ProdutoTaxaRepository();

@@ -1,20 +1,23 @@
 import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
+import Usuario from "./Usuario.js";
 
-const TipoPagamento = sequelize.define(
-  "tipo_pagamento",
+const Categoria = sequelize.define(
+  "categoria",
   {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    tipo: {
+
+    categoria: {
       type: Sequelize.STRING,
-      unique: true,
+      allowNull: false,
     },
   },
   { underscored: true, freezeTableName: true }
 );
 
-export default TipoPagamento;
+Categoria.belongsTo(Usuario, { foreignKey: "usuario_id" });
+export default Categoria;

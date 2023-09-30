@@ -28,6 +28,7 @@ const Usuario = sequelize.define(
     },
     ativo: {
       type: Sequelize.BOOLEAN,
+      defaultValue: true,
       allowNull: false,
     },
     admin: {

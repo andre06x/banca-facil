@@ -1,9 +1,10 @@
 import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
-import TiposPagamento from "./TiposPagamento.js";
+import TipoPagamento from "./TipoPagamento.js";
+import Usuario from "./Usuario.js";
 
 const Taxa = sequelize.define(
-  "taxas",
+  "taxa",
   {
     id: {
       type: Sequelize.UUID,
@@ -23,6 +24,7 @@ const Taxa = sequelize.define(
   { underscored: true, freezeTableName: true }
 );
 
-Taxa.belongsTo(TiposPagamento, { foreignKey: "tipo_pagamento_id" });
+Taxa.belongsTo(TipoPagamento, { foreignKey: "tipo_pagamento_id" });
+Taxa.belongsTo(Usuario, { foreignKey: "usuario_id" });
 
 export default Taxa;

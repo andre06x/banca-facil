@@ -1,19 +1,22 @@
 import { APIException } from "../exception/APIException.js";
+
 import * as httpStatus from "../config/constants/httpStatus.js";
-import TaxaRepository from "../repositories/TaxaRepository.js";
+import CategoriaRepository from "../repositories/CategoriaRepository.js";
 
-class TaxaService {
-  async criarTaxa(req) {
+class CategoriaService {
+  async criarCategoria(req) {
     try {
-      const obj_taxa = req.body;
+      const dados_categoria = req.body;
 
-      this.validarTaxa(obj_taxa);
-      await this.validarTaxaExistente(obj_taxa);
+      this.validarDadosCategoria(dados_categoria);
+      await this.validarCategoriaExistente(dados_categoria);
 
-      const taxaCriada = await TaxaRepository.criarTaxa(obj_taxa);
+      const categoria = await CategoriaRepository.criarCategoria(
+        dados_categoria
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: taxaCriada,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -22,16 +25,15 @@ class TaxaService {
       };
     }
   }
-  async buscarTaxa(req) {
+
+  async buscarCategoria(req) {
     try {
       const { id } = req.params;
-      const taxaEncontrada = await TaxaRepository.buscarTaxa(id);
-      if (!taxaEncontrada) {
-        throw new APIException(httpStatus.NOT_FOUND, "Taxa nao encontrada");
-      }
+      const categoria = await CategoriaRepository.buscarCategoria(id);
+
       return {
         status: httpStatus.SUCCESS,
-        content: taxaEncontrada,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -41,15 +43,15 @@ class TaxaService {
     }
   }
 
-  async buscarTodasTaxas(req) {
+  async buscarTodasCategorias(req) {
     try {
       const { usuarioid } = req.params;
-      this.validarId(usuarioid);
-      const todasTaxas = await TaxaRepository.buscarTodasTaxas(usuarioid);
-
+      const categorias = await CategoriaRepository.buscarTodasCategorias(
+        usuarioid
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: todasTaxas,
+        content: categorias,
       };
     } catch (err) {
       return {
@@ -58,16 +60,37 @@ class TaxaService {
       };
     }
   }
-  async editarTaxa(req) {
+
+  async editarCategoria(req) {
+    try {
+      const { id } = req.params;
+      const obj_categoria = req.body;
+      this.validarId(id);
+
+      const categoriaEditado = await CategoriaRepository.editarCategoria(
+        id,
+        obj_categoria
+      );
+      return {
+        status: httpStatus.SUCCESS,
+        contant: categoriaEditado,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
+  async excluirCategoria(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const obj_taxa = req.body;
-
-      const taxaEditada = await TaxaRepository.editarTaxa(id, obj_taxa);
+      const categoria = await CategoriaRepository.excluirCategoria(id);
       return {
         status: httpStatus.SUCCESS,
-        content: taxaEditada,
+        content: categoria,
       };
     } catch (err) {
       return {
@@ -76,44 +99,23 @@ class TaxaService {
       };
     }
   }
-  async excluirTaxa(req) {
-    try {
-      const { id } = req.params;
-      this.validarId(id);
-      const taxaExcluida = await TaxaRepository.excluirTaxa(id);
-
-      return {
-        status: httpStatus.SUCCESS,
-        content: taxaExcluida,
-      };
-    } catch (err) {
-      return {
-        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
-        error: err.message,
-      };
-    }
-  }
-
-  async validarTaxaExistente(obj_taxa) {
-    const taxaExistente = await TaxaRepository.validarTaxaExistente(obj_taxa);
-    if (taxaExistente) {
+  async validarCategoriaExistente(dados_categoria) {
+    const categoriaExistente =
+      await CategoriaRepository.validarCategoriaExistente(dados_categoria);
+    if (categoriaExistente) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "O nome da taxa já existente. Por favor, informe um novo nome."
+        "Categoria informada já existe em nossa base de dados."
       );
     }
   }
-  validarTaxa(obj_taxa) {
-    if (
-      !obj_taxa ||
-      !obj_taxa.nome ||
-      !obj_taxa.tipo_pagamento_id ||
-      !obj_taxa.taxa ||
-      obj_taxa.acumulativa === undefined
-    ) {
+
+  validarDadosCategoria(dados_categoria) {
+    const { usuario_id, categoria } = dados_categoria;
+    if (!usuario_id || !categoria) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Dados para a criação da taxa incompletos."
+        "Usuário ou categoria não informado."
       );
     }
   }
@@ -124,4 +126,5 @@ class TaxaService {
     }
   }
 }
-export default new TaxaService();
+
+export default new CategoriaService();

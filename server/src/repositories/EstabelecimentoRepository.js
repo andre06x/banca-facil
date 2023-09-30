@@ -1,6 +1,7 @@
 import { APIException } from "../exception/APIException.js";
 import * as httpStatus from "../config/constants/httpStatus.js";
 import Estabelecimento from "../models/Estabelecimento.js";
+import VendaStatus from "../models/VendaStatus.js";
 
 class EstabelecimentoRepository {
   async criarEstabelecimento(dados_estabelecimento) {
@@ -20,7 +21,17 @@ class EstabelecimentoRepository {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
   }
-
+  async validarEstabelecimentoExistente(dados_estabelecimento) {
+    const { nome_estabelecimento, usuario_id } = dados_estabelecimento;
+    try {
+      const estabelecimento = await Estabelecimento.findOne({
+        where: { nome_estabelecimento, usuario_id },
+      });
+      return estabelecimento?.dataValues;
+    } catch (err) {
+      throw new APIException(httpStatus.BAD_REQUEST, err.message);
+    }
+  }
   async buscarEstabelecimento(id) {
     try {
       const estabelecimento = await Estabelecimento.findOne({ where: { id } });
@@ -32,8 +43,13 @@ class EstabelecimentoRepository {
 
   async buscarTodosEstabelecimentos(id) {
     try {
-      const estabelecimentos = await Estabelecimento.findAll({
+      const estabelecimentos = await VendaStatus.findAll({
+        attributes: [],
         where: { usuario_id: id },
+        include: {
+          model: Estabelecimento,
+          left: true,
+        },
       });
       return estabelecimentos;
     } catch (err) {
@@ -43,7 +59,9 @@ class EstabelecimentoRepository {
 
   async editarEstabelecimento(id, obj_estabelecimento) {
     try {
-      const data = await Estabelecimento.update(obj_estabelecimento, { where: { id } });
+      const data = await Estabelecimento.update(obj_estabelecimento, {
+        where: { id },
+      });
       return data;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);

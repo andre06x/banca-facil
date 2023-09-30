@@ -9,7 +9,7 @@ class TaxaController {
     const taxa = await TaxaService.buscarTaxa(req);
     return res.status(taxa.status).json(taxa);
   }
-  async buscarTodasTaxass(req, res) {
+  async buscarTodasTaxas(req, res) {
     const taxas = await TaxaService.buscarTodasTaxas(req);
     return res.status(taxas.status).json(taxas);
   }

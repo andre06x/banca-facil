@@ -1,19 +1,19 @@
 import { APIException } from "../exception/APIException.js";
+
 import * as httpStatus from "../config/constants/httpStatus.js";
-import TaxaRepository from "../repositories/TaxaRepository.js";
+import ProdutoRepository from "../repositories/ProdutoRepository.js";
 
-class TaxaService {
-  async criarTaxa(req) {
+class ProdutosService {
+  async criarProduto(req) {
     try {
-      const obj_taxa = req.body;
+      const dados_produtos = req.body;
+      this.validarDadosProduto(dados_produtos);
+      await this.validarProdutoExistente(dados_produtos);
 
-      this.validarTaxa(obj_taxa);
-      await this.validarTaxaExistente(obj_taxa);
-
-      const taxaCriada = await TaxaRepository.criarTaxa(obj_taxa);
+      const produto = await ProdutoRepository.criarProduto(dados_produtos);
       return {
         status: httpStatus.SUCCESS,
-        content: taxaCriada,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -22,16 +22,15 @@ class TaxaService {
       };
     }
   }
-  async buscarTaxa(req) {
+
+  async buscarProduto(req) {
     try {
       const { id } = req.params;
-      const taxaEncontrada = await TaxaRepository.buscarTaxa(id);
-      if (!taxaEncontrada) {
-        throw new APIException(httpStatus.NOT_FOUND, "Taxa nao encontrada");
-      }
+      const produto = await ProdutoRepository.buscarProduto(id);
+
       return {
         status: httpStatus.SUCCESS,
-        content: taxaEncontrada,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -41,15 +40,15 @@ class TaxaService {
     }
   }
 
-  async buscarTodasTaxas(req) {
+  async buscarTodosProdutos(req) {
     try {
-      const { usuarioid } = req.params;
-      this.validarId(usuarioid);
-      const todasTaxas = await TaxaRepository.buscarTodasTaxas(usuarioid);
-
+      const { estabelecimentoid } = req.params;
+      const produtos = await ProdutoRepository.buscarTodosProdutos(
+        estabelecimentoid
+      );
       return {
         status: httpStatus.SUCCESS,
-        content: todasTaxas,
+        content: produtos,
       };
     } catch (err) {
       return {
@@ -58,33 +57,37 @@ class TaxaService {
       };
     }
   }
-  async editarTaxa(req) {
+
+  async editarProduto(req) {
+    try {
+      const { id } = req.params;
+      const obj_produto = req.body;
+      this.validarId(id);
+
+      const produtoEditado = await ProdutoRepository.editarProduto(
+        id,
+        obj_produto
+      );
+      return {
+        status: httpStatus.SUCCESS,
+        contant: produtoEditado,
+      };
+    } catch (err) {
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        error: err.message,
+      };
+    }
+  }
+
+  async excluirProduto(req) {
     try {
       const { id } = req.params;
       this.validarId(id);
-      const obj_taxa = req.body;
-
-      const taxaEditada = await TaxaRepository.editarTaxa(id, obj_taxa);
+      const produto = await ProdutoRepository.excluirProduto(id);
       return {
         status: httpStatus.SUCCESS,
-        content: taxaEditada,
-      };
-    } catch (err) {
-      return {
-        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
-        error: err.message,
-      };
-    }
-  }
-  async excluirTaxa(req) {
-    try {
-      const { id } = req.params;
-      this.validarId(id);
-      const taxaExcluida = await TaxaRepository.excluirTaxa(id);
-
-      return {
-        status: httpStatus.SUCCESS,
-        content: taxaExcluida,
+        content: produto,
       };
     } catch (err) {
       return {
@@ -94,26 +97,24 @@ class TaxaService {
     }
   }
 
-  async validarTaxaExistente(obj_taxa) {
-    const taxaExistente = await TaxaRepository.validarTaxaExistente(obj_taxa);
-    if (taxaExistente) {
+  async validarProdutoExistente(dados_produtos) {
+    const produtoExistente = await ProdutoRepository.validarProdutoExistente(
+      dados_produtos
+    );
+    if (produtoExistente) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "O nome da taxa já existente. Por favor, informe um novo nome."
+        "O produto informado já existe em nossa base de dados. Por favor, informe um novo produto."
       );
     }
   }
-  validarTaxa(obj_taxa) {
-    if (
-      !obj_taxa ||
-      !obj_taxa.nome ||
-      !obj_taxa.tipo_pagamento_id ||
-      !obj_taxa.taxa ||
-      obj_taxa.acumulativa === undefined
-    ) {
+
+  validarDadosProduto(dados_produtos) {
+    const { nome, valor, quantidade_disponivel } = dados_produtos;
+    if (!nome || !valor || !quantidade_disponivel) {
       throw new APIException(
         httpStatus.BAD_REQUEST,
-        "Dados para a criação da taxa incompletos."
+        "Nome, valor ou quantidade disponível não informado."
       );
     }
   }
@@ -124,4 +125,5 @@ class TaxaService {
     }
   }
 }
-export default new TaxaService();
+
+export default new ProdutosService();

@@ -1,20 +1,18 @@
 import sequelize from "../config/db/dbConfig.js";
 import Sequelize from "sequelize";
+import Taxa from "./Taxa.js"; // Importe o modelo 'Taxa' após as declarações acima
 
-const TipoPagamento = sequelize.define(
-  "tipo_pagamento",
+const ProdutoTaxa = sequelize.define(
+  "produto_taxa",
   {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    tipo: {
-      type: Sequelize.STRING,
-      unique: true,
-    },
   },
   { underscored: true, freezeTableName: true }
 );
 
-export default TipoPagamento;
+ProdutoTaxa.belongsTo(Taxa, { foreignKey: "taxa_id" });
+export default ProdutoTaxa;

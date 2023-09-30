@@ -1,83 +1,32 @@
 import { Router } from "express";
 import CheckToken from "./src/config/auth/CheckToken.js";
-import CheckAdmin from "./src/config/auth/CheckToken.js";
-import EstabelecimentoController from "./src/controllers/EstabelecimentoController.js";
 import UsuarioController from "./src/controllers/UsuarioController.js";
-import FuncionariosEstabelecimentoController from "./src/controllers/FuncionariosEstabelecimentoController.js";
-import CategoriasController from "./src/controllers/CategoriasController.js";
-import ProdutosController from "./src/controllers/ProdutosController.js";
+import { RotaUsuario } from "./src/routes/RotaUsuario.js";
+import { RotaEstabelecimento } from "./src/routes/RotaEstabelecimento.js";
+import { RotaFuncionarioEstabelecimento } from "./src/routes/RotaFuncionarioEstabelecimento.js";
+import { RotaCategoria } from "./src/routes/RotaCategoria.js";
+import { RotaProduto } from "./src/routes/RotaProduto.js";
+import { RotaTipoPagamento } from "./src/routes/RotaTipoPagamento.js";
+import { RotaTaxa } from "./src/routes/RotaTaxa.js";
+import { RotaProdutoTaxa } from "./src/routes/RotaProdutoTaxa.js";
+import { RotaVendaStatus } from "./src/routes/RotaVendaStatus.js";
+
 const router = new Router();
 
 router.post("/api/usuario", UsuarioController.criarUsuario);
 router.get("/api/usuario/autenticar", UsuarioController.autenticar);
 
+router.use(RotaUsuario);
+router.use(RotaCategoria);
+router.use(RotaProduto);
+router.use(RotaTipoPagamento);
+router.use(RotaTaxa);
+router.use(RotaProdutoTaxa);
+router.use(RotaVendaStatus);
+router.use(RotaFuncionarioEstabelecimento);
 router.use(CheckToken);
-
-router.get("/api/usuario", UsuarioController.buscarTodosUsuario);
-router.get("/api/usuario/:id", UsuarioController.buscarUsuario);
-router.put("/api/usuario/:id", UsuarioController.editarUsuario);
-router.delete("/api/usuario/:id", UsuarioController.excluirUsuario);
-router.get(
-  "/api/buscar-funcionarios/:usuario",
-  UsuarioController.buscarFuncionarios
-);
-
-router.post(
-  "/api/estabelecimento",
-  EstabelecimentoController.criarEstabelecimento
-);
-router.get(
-  "/api/todos-estabelecimentos/:usuarioid",
-  EstabelecimentoController.buscarTodosEstabelecimento
-);
-
-router.get(
-  "/api/estabelecimento/:id",
-  EstabelecimentoController.buscarEstabelecimento
-);
-router.put(
-  "/api/estabelecimento/:id",
-  EstabelecimentoController.editarEstabelecimento
-);
-router.delete(
-  "/api/estabelecimento/:id",
-  EstabelecimentoController.excluirEstabelecimento
-);
-
-router.post(
-  "/api/vincular-funcionario-estabelecimento",
-  FuncionariosEstabelecimentoController.criarFuncionariosEstabelecimento
-);
-router.get(
-  "/api/buscar-funcionario-estabelecimento/:id",
-  FuncionariosEstabelecimentoController.buscarFuncionariosEstabelecimento
-);
-router.get(
-  "/api/buscar-estabelecimento-funcionario/:id",
-  FuncionariosEstabelecimentoController.buscarEstabelecimentoFuncionario
-);
-router.delete(
-  "/api/excluir-vinculo-funcionario-estabelecimento/:id",
-  FuncionariosEstabelecimentoController.excluirFuncionariosEstabelecimento
-);
-
-router.post("/api/categorias", CategoriasController.criarCategoria);
-router.get(
-  "/api/todas-categorias/:usuarioid",
-  CategoriasController.buscarTodasCategorias
-);
-router.get("/api/categorias/:id", CategoriasController.buscarCategoria);
-router.put("/api/categorias/:id", CategoriasController.editarCategoria);
-router.delete("/api/categorias/:id", CategoriasController.excluirCategoria);
+router.use(RotaEstabelecimento);
 
 //produtos
-router.post("/api/produtos", ProdutosController.criarProduto);
-router.get(
-  "/api/todos-produtos/:estabelecimentoid",
-  ProdutosController.buscarTodosProdutos
-);
-router.get("/api/produtos/:id", ProdutosController.buscarProduto);
-router.put("/api/produtos/:id", ProdutosController.editarProduto);
-router.delete("/api/produtos/:id", ProdutosController.excluirProduto);
 
 export { router };
