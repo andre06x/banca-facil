@@ -13,7 +13,7 @@ class EstabelecimentoRepository {
         cidade,
         nome_estabelecimento,
         lat: lat ? lat : null,
-        lon: lon ? long : null,
+        lon: lon ? lon : null,
       };
       const estabelecimento = await Estabelecimento.create(data);
       return estabelecimento.dataValues;
@@ -43,13 +43,8 @@ class EstabelecimentoRepository {
 
   async buscarTodosEstabelecimentos(id) {
     try {
-      const estabelecimentos = await VendaStatus.findAll({
-        attributes: [],
+      const estabelecimentos = await Estabelecimento.findAll({
         where: { usuario_id: id },
-        include: {
-          model: Estabelecimento,
-          left: true,
-        },
       });
       return estabelecimentos;
     } catch (err) {

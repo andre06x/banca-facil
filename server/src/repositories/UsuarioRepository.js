@@ -35,6 +35,7 @@ class UsuarioRepository {
   }
   async buscarUsuario(id) {
     try {
+      console.log(id);
       const usuario = await Usuario.findOne({ where: { id } });
       return usuario.dataValues;
     } catch (err) {
@@ -52,6 +53,13 @@ class UsuarioRepository {
   }
 
   async editarUsuario(id, obj_usuario) {
+    if (obj_usuario.senha === "") {
+      delete obj_usuario.senha;
+    }
+    if (obj_usuario.senha) {
+      obj_usuario.senha = await hash(obj_usuario.senha, 10);
+    }
+
     try {
       const data = await Usuario.update(obj_usuario, { where: { id } });
       return data;
@@ -80,7 +88,10 @@ class UsuarioRepository {
 
   async buscarFuncionarios(id) {
     try {
-      return await Usuario.findAll({ where: { responsavel: id } });
+      return await Usuario.findAll({
+        attributes: ["id", "nome", "email", "responsavel", "ativo"],
+        where: { responsavel: id },
+      });
     } catch (err) {
       console.error(err.message);
       return null;

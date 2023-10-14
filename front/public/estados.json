@@ -1,0 +1,237 @@
+[
+  {
+      "value": "11",
+      "sigla": "RO",
+      "label": "Rondônia"
+  },
+  {
+      "value": 12,
+      "sigla": "AC",
+      "label": "Acre"
+  },
+  {
+      "value": 13,
+      "sigla": "AM",
+      "label": "Amazonas"
+  },
+  {
+      "value": 14,
+      "sigla": "RR",
+      "label": "Roraima"
+  },
+  {
+      "value": 15,
+      "sigla": "PA",
+      "label": "Pará"
+  },
+  {
+      "value": 16,
+      "sigla": "AP",
+      "label": "Amapá"
+  },
+  {
+      "value": 17,
+      "sigla": "TO",
+      "label": "Tocantins"
+  },
+  {
+      "value": 21,
+      "sigla": "MA",
+      "label": "Maranhão",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 22,
+      "sigla": "PI",
+      "label": "Piauí",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 23,
+      "sigla": "CE",
+      "label": "Ceará",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 24,
+      "sigla": "RN",
+      "label": "Rio Grande do Norte",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 25,
+      "sigla": "PB",
+      "label": "Paraíba",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 26,
+      "sigla": "PE",
+      "label": "Pernambuco",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 27,
+      "sigla": "AL",
+      "label": "Alagoas",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 28,
+      "sigla": "SE",
+      "label": "Sergipe",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 29,
+      "sigla": "BA",
+      "label": "Bahia",
+      "regiao": {
+          "value": 2,
+          "sigla": "NE",
+          "label": "Nordeste"
+      }
+  },
+  {
+      "value": 31,
+      "sigla": "MG",
+      "label": "Minas Gerais",
+      "regiao": {
+          "value": 3,
+          "sigla": "SE",
+          "label": "Sudeste"
+      }
+  },
+  {
+      "value": 32,
+      "sigla": "ES",
+      "label": "Espírito Santo",
+      "regiao": {
+          "value": 3,
+          "sigla": "SE",
+          "label": "Sudeste"
+      }
+  },
+  {
+      "value": 33,
+      "sigla": "RJ",
+      "label": "Rio de Janeiro",
+      "regiao": {
+          "value": 3,
+          "sigla": "SE",
+          "label": "Sudeste"
+      }
+  },
+  {
+      "value": 35,
+      "sigla": "SP",
+      "label": "São Paulo",
+      "regiao": {
+          "value": 3,
+          "sigla": "SE",
+          "label": "Sudeste"
+      }
+  },
+  {
+      "value": 41,
+      "sigla": "PR",
+      "label": "Paraná",
+      "regiao": {
+          "value": 4,
+          "sigla": "S",
+          "label": "Sul"
+      }
+  },
+  {
+      "value": 42,
+      "sigla": "SC",
+      "label": "Santa Catarina",
+      "regiao": {
+          "value": 4,
+          "sigla": "S",
+          "label": "Sul"
+      }
+  },
+  {
+      "value": 43,
+      "sigla": "RS",
+      "label": "Rio Grande do Sul",
+      "regiao": {
+          "value": 4,
+          "sigla": "S",
+          "label": "Sul"
+      }
+  },
+  {
+      "value": 50,
+      "sigla": "MS",
+      "label": "Mato Grosso do Sul",
+      "regiao": {
+          "value": 5,
+          "sigla": "CO",
+          "label": "Centro-Oeste"
+      }
+  },
+  {
+      "value": 51,
+      "sigla": "MT",
+      "label": "Mato Grosso",
+      "regiao": {
+          "value": 5,
+          "sigla": "CO",
+          "label": "Centro-Oeste"
+      }
+  },
+  {
+      "value": 52,
+      "sigla": "GO",
+      "label": "Goiás",
+      "regiao": {
+          "value": 5,
+          "sigla": "CO",
+          "label": "Centro-Oeste"
+      }
+  },
+  {
+      "value": 53,
+      "sigla": "DF",
+      "label": "Distrito Federal",
+      "regiao": {
+          "value": 5,
+          "sigla": "CO",
+          "label": "Centro-Oeste"
+      }
+  }
+]

@@ -7,6 +7,8 @@ class UsuarioController {
   }
 
   async autenticar(req, res) {
+    console.log("aqui autenticar ");
+
     const usuario = await UsuarioService.autenticar(req);
     return res.status(usuario.status).json(usuario);
   }

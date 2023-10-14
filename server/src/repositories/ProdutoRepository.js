@@ -5,12 +5,13 @@ import Taxa from "../models/Taxa.js";
 import TipoPagamento from "../models/TipoPagamento.js";
 import ProdutoTaxa from "../models/ProdutoTaxa.js";
 import Estabelecimento from "../models/Estabelecimento.js";
+import Categoria from "../models/Categoria.js";
 
 class ProdutoRepository {
   async criarProduto(dados_produto) {
     try {
       const produtos = await Produto.create(dados_produto);
-      return produtos.dataValues;
+      return this.buscarProduto(produtos.dataValues.id);
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -30,7 +31,10 @@ class ProdutoRepository {
 
   async buscarProduto(id) {
     try {
-      const produto = await Produto.findOne({ where: { id } });
+      const produto = await Produto.findOne({
+        where: { id },
+        include: Categoria,
+      });
       return produto.dataValues;
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
@@ -45,6 +49,7 @@ class ProdutoRepository {
             model: ProdutoTaxa,
             include: [{ model: Taxa, include: [{ model: TipoPagamento }] }],
           },
+          { model: Categoria },
         ],
         where: { estabelecimento_id: id },
       });

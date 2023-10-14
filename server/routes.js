@@ -14,7 +14,7 @@ import { RotaVendaStatus } from "./src/routes/RotaVendaStatus.js";
 const router = new Router();
 
 router.post("/api/usuario", UsuarioController.criarUsuario);
-router.get("/api/usuario/autenticar", UsuarioController.autenticar);
+router.post("/api/usuario/autenticar/", UsuarioController.autenticar);
 
 router.use(RotaUsuario);
 router.use(RotaCategoria);
