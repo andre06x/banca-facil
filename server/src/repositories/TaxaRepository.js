@@ -7,7 +7,7 @@ class TaxaRepository {
   async criarTaxa(taxaData) {
     try {
       const taxa = await Taxa.create(taxaData);
-      return taxa.dataValues;
+      return this.buscarTaxa(taxa.dataValues.id);
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
