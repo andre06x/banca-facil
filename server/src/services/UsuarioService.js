@@ -41,7 +41,7 @@ class UsuarioService {
 
       let auth = {
         id: usuario.id,
-        admin: usuario.admin,
+        admin: usuario?.admin || false,
       };
 
       const data = {};
@@ -50,6 +50,7 @@ class UsuarioService {
       });
 
       data["usuario"] = usuario.id;
+      data["nome"] = usuario.nome;
       return {
         status: httpStatus.SUCCESS,
         data,
@@ -63,8 +64,15 @@ class UsuarioService {
   }
   async buscarUsuario(req) {
     try {
-      const { admin, id: idToken } = req.auth;
+      var admin = false,
+        idToken = null;
+      if (req.auth) {
+        const { admin: Admin = false, id: Id } = req?.auth;
+        admin = Admin;
+        idToken = Id;
+      }
       const { id } = req.params;
+
       const usuario = await UsuarioRepository.buscarUsuario(
         admin ? id : idToken
       );
