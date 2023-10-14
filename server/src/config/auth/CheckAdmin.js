@@ -3,7 +3,7 @@ import { APIException } from "../../exception/APIException.js";
 
 export default async (req, res, next) => {
   try {
-    const { admin } = req.auth;
+    const { admin } = req?.auth;
 
     if (!admin) {
       throw new APIException(httpStatus.UNAUTHORIZED, "Sem acesso.");
