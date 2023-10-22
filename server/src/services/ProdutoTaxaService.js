@@ -83,9 +83,12 @@ class ProdutoTaxaService {
 
   async excluirProdutoTaxa(req) {
     try {
-      const { id } = req.params;
+      const { id, produto: produto_id } = req.params;
       this.validarId(id);
-      const produto = await ProdutoTaxaRepository.excluirProdutoTaxa(id);
+      const produto = await ProdutoTaxaRepository.excluirProdutoTaxa(
+        id,
+        produto_id
+      );
       return {
         status: httpStatus.SUCCESS,
         content: produto,
