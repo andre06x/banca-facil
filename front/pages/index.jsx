@@ -5,6 +5,8 @@ import { getApiClient } from "./api/axios";
 import { api } from "./api/api";
 import { Trash2 } from "lucide-preact";
 import ModalCriarProduto from "@/components/ModalCriarProduto";
+import Venda from "@/components/Venda";
+import ModalTaxaProduto from "@/components/ModalTaxaProduto";
 
 const MapaComponente = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -97,12 +99,17 @@ export default function Home({ token }) {
 function Produtos({ estabelecimento, usuario }) {
   const [produtos, setProdutos] = useState([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalTaxaProduto, setModalTaxaProduto] = useState(false);
+  const [editarProduto, setEditarProduto] = useState(null);
 
-  useEffect(() => {
+  function buscarTodosProdutos() {
     api.get(`/todos-produtos/${estabelecimento.id}`).then((response) => {
       console.log(response.data);
       setProdutos(response.data.content || []);
     });
+  }
+  useEffect(() => {
+    buscarTodosProdutos();
   }, [estabelecimento]);
 
   async function excluirProduto(id) {
@@ -117,8 +124,8 @@ function Produtos({ estabelecimento, usuario }) {
     }
   }
   return (
-    <div class="mt-20 relative overflow-x-auto shadow-md sm:rounded-lg p-3">
-      <div class="pb-4 pt-2 pl-1 bg-white dark:bg-gray-900">
+    <div class="mt-20 relative overflow-x-auto shadow-md sm:rounded-lg px-1">
+      <div class="pb-4 pt-2 bg-white dark:bg-gray-900">
         <div className="flex justify-between mx-3">
           <span className="text-3xl text-gray-500 ">
             Lista de produtos {estabelecimento.nome_estabelecimento}
@@ -196,10 +203,24 @@ function Produtos({ estabelecimento, usuario }) {
                   <Trash2 color="red" size={20} />
                 </button>
               </td>
+
+              <td class="px-6 py-4">
+                <button
+                  type="button"
+                  className="ml-4"
+                  onClick={() => {
+                    setEditarProduto(produto);
+                    setIsOpenModal(true);
+                  }}
+                >
+                  EDIT
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
       <ModalCriarProduto
         estabelecimento={estabelecimento.id}
         setIsOpenModal={setIsOpenModal}
@@ -207,7 +228,16 @@ function Produtos({ estabelecimento, usuario }) {
         produtos={produtos}
         setProdutos={setProdutos}
         usuario={usuario}
+        editarProduto={editarProduto}
+        setEditarProduto={setEditarProduto}
+        buscarTodosProdutos={buscarTodosProdutos}
       />
+
+      {estabelecimento.id ? (
+        <Venda estabelecimento={estabelecimento} produtos={produtos} />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
