@@ -39,6 +39,10 @@ export default function Layout({ children, rotas }) {
                 {rota.nome}
               </Link>
             ))}
+
+            <button className="hover:text-gray-300" onClick={logout}>
+              Logout
+            </button>
           </div>
           <div className="md:hidden flex items-center">
             <button
@@ -62,24 +66,24 @@ export default function Layout({ children, rotas }) {
             </button>
           </div>
         </div>
-        {/* Menu de navegação para dispositivos móveis */}
         {isOpen ? (
           <div className="md:hidden mt-2 transition duration-300 flex flex-col">
-            {/* Adicione seus links de navegação para dispositivos móveis aqui */}
-
             {rotas.map((rota, indice) => (
               <Link className="hover:text-gray-300" href={rota.redirecionar} key={indice}>
                 {rota.nome}
               </Link>
             ))}
+            <button className="hover:text-gray-300" onClick={logout}>
+              Logout
+            </button>
           </div>
         ) : (
           ""
         )}
       </nav>
 
-      <div className="container mx-auto p-4">
-        <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg border-gray-700">
+      <div className="container mx-auto py-4 px-2">
+        <div className="pt-4 px-1 border-2 border-gray-200 border-dashed rounded-lg border-gray-700">
           <main>{children}</main>
         </div>
       </div>
