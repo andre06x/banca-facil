@@ -1,8 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
 import { api } from "./api/api";
 import { parseCookies } from "nookies";
-import { Pencil, Trash2 } from "lucide-preact";
+import { BadgePlus, Pencil, Trash2 } from "lucide-preact";
 import dynamic from "next/dynamic";
+import { getApiClient } from "./api/axios";
 
 const ModalFuncionario = dynamic(() => import("@/components/ModalCriarFuncionario"), {
   ssr: true,
@@ -21,12 +22,28 @@ export async function getServerSideProps(ctx) {
     };
   }
 
-  const response = await api.get(`/buscar-funcionarios/${usuario}`);
+  const apiWeb = getApiClient(ctx, token);
+
+  const response = await apiWeb.get(`/buscar-funcionarios/${usuario}`);
+  const response_estabelecimento = await apiWeb.get(`/todos-estabelecimentos/${usuario}`);
+
   const funcionarios = response.data.content || [];
-  return { props: { funcionarios, usuario } };
+  const estabelecimentos = response_estabelecimento.data.content || [];
+  return {
+    props: {
+      funcionarios,
+      usuario,
+      estabelecimentos,
+    },
+  };
 }
-export default function Funcionarios({ funcionarios: funcionariosServer, usuario }) {
+export default function Funcionarios({
+  funcionarios: funcionariosServer,
+  usuario,
+  estabelecimentos: estabelecimentosServer,
+}) {
   const [funcionarios, setFuncionarios] = useState(funcionariosServer);
+  const [estabelecimentos, setEstabelecimentos] = useState(estabelecimentosServer);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   function abrirModal() {
@@ -210,6 +227,11 @@ export default function Funcionarios({ funcionarios: funcionariosServer, usuario
               Atualizar funcionario
             </button>
           </form>
+
+          <EstabelecimentoFuncionario
+            estabelecimentos={estabelecimentosServer}
+            funcionario={formFuncionario}
+          />
         </div>
       ) : (
         ""
@@ -222,6 +244,130 @@ export default function Funcionarios({ funcionarios: funcionariosServer, usuario
         setFuncionarios={setFuncionarios}
         usuario={usuario}
       />
+    </div>
+  );
+}
+
+function EstabelecimentoFuncionario({
+  estabelecimentos: estabelecimentosServer,
+  funcionario,
+}) {
+  const [estabelecimentos, setEstabelecimentos] = useState([]);
+  const [estabelecimentosUsuario, setEstabelecimentosUsuario] = useState([]);
+  const [estabelecimentoEscolhido, setEstabelecimentoEscolhido] = useState("");
+
+  async function teste() {
+    console.log(funcionario.id);
+    api.get(`/buscar-estabelecimento-funcionario/${funcionario.id}`).then((response) => {
+      const estabeleUsuario = response.data.content;
+      setEstabelecimentosUsuario(estabeleUsuario);
+
+      let estabelecimentosNaoPreenchidos = [];
+      for (let i = 0; i < estabelecimentosServer.length; i++) {
+        const existeEstabelecimento = estabeleUsuario.find(
+          (server) => server.id === estabelecimentosServer[i].id
+        );
+        if (!existeEstabelecimento) {
+          estabelecimentosNaoPreenchidos.push(estabelecimentosServer[i]);
+        }
+      }
+
+      setEstabelecimentos(estabelecimentosNaoPreenchidos);
+    });
+  }
+
+  useEffect(() => {
+    teste();
+  }, [funcionario]);
+
+  async function vincularFuncionario() {
+    try {
+      const data = {
+        usuario_id: funcionario.id,
+        estabelecimento_id: estabelecimentoEscolhido,
+      };
+      const response = await api.post("/vincular-funcionario-estabelecimento", data);
+      alert("Funcionário cadastrado com sucesso!");
+      teste();
+    } catch (err) {}
+  }
+
+  async function desvincular(vinculo) {
+    try {
+      const response = await api.delete(
+        `/excluir-vinculo-funcionario-estabelecimento/${vinculo.id_vinculo}`
+      );
+      alert("Vinculo deletado com sucesso!");
+      teste();
+    } catch (err) {}
+  }
+  return (
+    <div className="border border-separate">
+      <h1 className="text-lg">Estabelecimentos do {funcionario.nome}</h1>
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th></th>
+            <th scope="col" class="px-6 py-3">
+              Estabelecimento
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td>
+              <select
+                name=""
+                id=""
+                onChange={(e) => setEstabelecimentoEscolhido(e.target.value)}
+              >
+                <option value=""></option>
+                {estabelecimentos.map((estabelecimentos) => (
+                  <option value={estabelecimentos.id}>
+                    {estabelecimentos.nome_estabelecimento}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td>
+              <td class="px-6 py-4">
+                <button
+                  type="button"
+                  onClick={() => vincularFuncionario()}
+                  className="ml-4"
+                >
+                  <BadgePlus color="blue" size={20} />
+                </button>
+              </td>
+            </td>
+          </tr>
+          {estabelecimentosUsuario.map((estabelecimento, index) => (
+            <tr
+              key={index}
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+            >
+              <th
+                scope="row"
+                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              >
+                {estabelecimento.nome_estabelecimento}
+              </th>
+
+              <td class="px-6 py-4">
+                <button
+                  type="button"
+                  onClick={() => desvincular(estabelecimento)}
+                  className="ml-4"
+                >
+                  <Trash2 color="red" size={20} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
