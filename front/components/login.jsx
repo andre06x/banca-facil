@@ -40,6 +40,12 @@ export default function LoginLayout() {
       setCookie(undefined, "nextauth.nome", nome, {
         maxAge: 60 * 60 * 1,
       });
+
+      const { data } = await api.get("/tipos-pagamento");
+      setCookie(undefined, "tipos-pagamentos", JSON.stringify(data.content), {
+        maxAge: 60 * 60 * 1,
+      });
+
       setLoading(false);
 
       router.push("/", { scroll: false });
