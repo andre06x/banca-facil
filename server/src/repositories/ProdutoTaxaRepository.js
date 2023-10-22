@@ -3,12 +3,15 @@ import * as httpStatus from "../config/constants/httpStatus.js";
 import Produto from "../models/Produto.js";
 import Taxa from "../models/Taxa.js";
 import ProdutoTaxa from "../models/ProdutoTaxa.js";
+import ProdutoRepository from "./ProdutoRepository.js";
 
 class ProdutoTaxaRepository {
   async criarProdutoTaxa(dados_produto_taxa) {
     try {
       const produto_taxa = await ProdutoTaxa.create(dados_produto_taxa);
-      return produto_taxa.dataValues;
+      return await ProdutoRepository.buscarProduto(
+        dados_produto_taxa.produto_id
+      );
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -69,10 +72,10 @@ class ProdutoTaxaRepository {
     }
   }
 
-  async excluirProdutoTaxa(id) {
+  async excluirProdutoTaxa(id, produto_id) {
     try {
       await ProdutoTaxa.destroy({ where: { id } });
-      return "Produto excluído com sucesso!";
+      return await ProdutoRepository.buscarProduto(produto_id);
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
