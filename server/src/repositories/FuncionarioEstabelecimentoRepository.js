@@ -15,7 +15,9 @@ class FuncionarioEstabelecimentoRepository {
         estabelecimento_id,
       };
       const estabelecimento = await FuncionarioEstabelecimento.create(data);
-      return estabelecimento.dataValues;
+      return this.buscarEstabelecimentoFuncionario(
+        estabelecimento.dataValues.usuario_id
+      );
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -24,6 +26,7 @@ class FuncionarioEstabelecimentoRepository {
     try {
       const estabelecimentos = await FuncionarioEstabelecimento.findAll({
         attributes: [
+          "funcionario_estabelecimento.id as id_vinculo",
           "estabelecimento.id",
           "estabelecimento.cidade",
           "estabelecimento.lat",

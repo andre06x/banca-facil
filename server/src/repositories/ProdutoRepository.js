@@ -33,7 +33,13 @@ class ProdutoRepository {
     try {
       const produto = await Produto.findOne({
         where: { id },
-        include: Categoria,
+        include: [
+          {
+            model: ProdutoTaxa,
+            include: [{ model: Taxa, include: [{ model: TipoPagamento }] }],
+          },
+          { model: Categoria },
+        ],
       });
       return produto.dataValues;
     } catch (err) {

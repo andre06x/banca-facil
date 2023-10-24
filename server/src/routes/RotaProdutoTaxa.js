@@ -21,7 +21,7 @@ RotaProdutoTaxa.put(
   ProdutoTaxaController.editarProdutoTaxa
 );
 RotaProdutoTaxa.delete(
-  "/api/produto-taxa/:id",
+  "/api/produto-taxa/:id/produto/:produto",
   ProdutoTaxaController.excluirProdutoTaxa
 );
 
