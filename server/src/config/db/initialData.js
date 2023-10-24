@@ -175,12 +175,12 @@ const venda_produto = [
 
 export async function createInitialData() {
   try {
-    await Taxa.sync({ alter: true });
     await Usuario.sync({ alter: true });
+    await TipoPagamento.sync({ alter: true });
+    await Taxa.sync({ alter: true });
     await Estabelecimento.sync({ alter: true });
     await FuncionarioEstabelecimento.sync({ alter: true });
     await Categoria.sync({ alter: true });
-    await TipoPagamento.sync({ alter: true });
     await Produto.sync({ alter: true });
     await ProdutoTaxa.sync({ alter: true });
     await VendaStatus.sync({ alter: true });
@@ -189,6 +189,7 @@ export async function createInitialData() {
     await Estabelecimento.bulkCreate(estabelecimentos, {
       ignoreDuplicates: true,
     });
+
     await Categoria.bulkCreate(categorias, { ignoreDuplicates: true });
     await TipoPagamento.bulkCreate(tipos, { ignoreDuplicates: true });
     await Produto.bulkCreate(produtos, { ignoreDuplicates: true });
