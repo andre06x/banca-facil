@@ -48,11 +48,10 @@ App.getInitialProps = async ({ ctx }) => {
     } catch (err) {}
     const admin = decode?.auth.admin;
 
-    const rotasComuns = [{ nome: "Vendas", redirecionar: "/vendas", icon: "" }];
+    const rotasComuns = [{ nome: "", redirecionar: "/", icon: "" }];
 
     const rotasPrivadas = [
       ...rotasComuns,
-      { nome: "Produtos", redirecionar: "/produtos", icon: "" },
       { nome: "Categorias", redirecionar: "/categorias", icon: "" },
       { nome: "Funcionários", redirecionar: "/funcionarios", icon: "" },
       { nome: "Taxas", redirecionar: "/taxas", icon: "" },
