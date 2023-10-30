@@ -83,7 +83,7 @@ export default function Layout({ children, rotas }) {
       </nav>
 
       <div className="container mx-auto py-4 px-2">
-        <div className="pt-4 px-1 border-2 border-gray-200 border-dashed rounded-lg border-gray-700">
+        <div className="pt-4 px-1 border-x-2 border-gray-200 border-dashed rounded-lg border-gray-700">
           <main>{children}</main>
         </div>
       </div>
