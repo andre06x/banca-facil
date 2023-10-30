@@ -212,11 +212,16 @@ class VendaStatusRepository {
 
   async gerarUltimasVendas(dados) {
     try {
-      //campo estabelecimento id obrigatório
+      const { estabelecimento_id, data, dataInicio, dataFim } = dados;
+      const where = { estabelecimento_id };
 
-      //caso receba data vai buscar todos
-      const { estabelecimento_id, data } = dados;
-      //pode alterar para enviar dados
+      if (dataInicio && dataFim) {
+        where.data = {
+          [Op.between]: [dataInicio, dataFim],
+        };
+      } else if (data) {
+        where.data = data;
+      }
 
       const vendas = await VendaStatus.findAll({
         include: [
@@ -237,7 +242,7 @@ class VendaStatusRepository {
             attributes: ["nome_estabelecimento"],
           },
         ],
-        where: dados,
+        where,
         order: [["data_completa", "DESC"]],
       });
       return vendas;
@@ -260,7 +265,7 @@ class VendaStatusRepository {
         };
       }
 
-      const vendas = await VendaStatus.findAll({
+      let vendas = await VendaStatus.findAll({
         attributes: [
           [sequelize.fn("SUM", sequelize.col("valor_total")), "valor_total"],
           [
@@ -280,7 +285,22 @@ class VendaStatusRepository {
         group: ["tipo_pagamento.id", "tipo_pagamento_id"],
         raw: true,
       });
-      return vendas;
+
+      if (vendas.length > 0) {
+        for (const tipo_pagamento of vendas) {
+          let dados_tipo = {
+            ...dados,
+            tipo_pagamento_id: tipo_pagamento.tipo_pagamento_id,
+          };
+          let produtos = await this.produtosTipoPagamento(dados_tipo);
+          tipo_pagamento.produtos = produtos;
+        }
+
+        console.log(vendas);
+        return vendas;
+      } else {
+        return vendas;
+      }
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -290,13 +310,15 @@ class VendaStatusRepository {
     try {
       //campo estabelecimento id obrigatório
 
-      const { estabelecimento_id, tipo_pagamento_id, dataInicio, dataFim } =
-        dados;
+      const { estabelecimento_id, data, dataInicio, dataFim } = dados;
       const where = { estabelecimento_id };
+
       if (dataInicio && dataFim) {
         where.data = {
           [Op.between]: [dataInicio, dataFim],
         };
+      } else if (data) {
+        where.data = data;
       }
 
       const vendas = await VendaStatus.findAll({
@@ -304,7 +326,7 @@ class VendaStatusRepository {
           [sequelize.fn("SUM", sequelize.col("valor_total")), "total"],
           "data",
         ],
-        where: where,
+        where,
         group: ["data"],
       });
       return vendas;
@@ -315,23 +337,35 @@ class VendaStatusRepository {
 
   async produtosTipoPagamento(dados) {
     try {
-      const { estabelecimento_id, tipo_pagamento_id, dataInicio, dataFim } =
-        dados;
+      const {
+        estabelecimento_id,
+        tipo_pagamento_id,
+        dataInicio,
+        dataFim,
+        data,
+      } = dados;
 
-      const vendas = sequelize.query(
+      const vendas = await sequelize.query(
         `
-          SELECT nome, SUM(venda_produto.valor_total) as total, SUM(venda_produto.quantidade) as quantidade FROM "venda_status"
-          JOIN tipo_pagamento ON tipo_pagamento."id" = venda_status.tipo_pagamento_id
-          JOIN venda_produto ON venda_produto.venda_status_id = venda_status.id
-          JOIN produto ON produto.id = venda_produto.produto_id
-          WHERE tipo_pagamento.id = '${tipo_pagamento_id}' AND
-          data BETWEEN '${dataInicio}' AND '${dataFim}' AND
-          venda_status.estabelecimento_id = '${estabelecimento_id}'
-          GROUP BY tipo_pagamento."id", nome;
-      `,
-        { raw: false }
+        SELECT tipo_pagamento.tipo, nome, SUM(venda_produto.valor_total) as total, SUM(venda_produto.quantidade) as quantidade 
+        FROM "venda_status"
+        JOIN tipo_pagamento ON tipo_pagamento."id" = venda_status.tipo_pagamento_id
+        JOIN venda_produto ON venda_produto.venda_status_id = venda_status.id
+        JOIN produto ON produto.id = venda_produto.produto_id
+        WHERE tipo_pagamento.id = '${tipo_pagamento_id}'
+        ${dataInicio ? `AND venda_status.data >= '${dataInicio}'` : ""}
+        ${dataFim ? `AND venda_status.data <= '${dataFim}'` : ""}
+        ${
+          data && !dataInicio && !dataFim
+            ? `AND venda_status.data = '${data}'`
+            : ""
+        }
+        AND venda_status.estabelecimento_id = '${estabelecimento_id}'
+        GROUP BY tipo_pagamento."id", nome;
+        `,
+        { raw: true, fieldMap: true }
       );
-      return vendas;
+      return vendas[0];
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
     }
@@ -368,23 +402,31 @@ class VendaStatusRepository {
 
   async gerarProdutosVendidosRentaveis(dados) {
     try {
-      let { estabelecimento_id, data, ordenado } = dados;
-      ordenado = ordenado ? ordenado : "total";
+      let { estabelecimento_id, data, dataInicio, dataFim, ordenado } = dados;
+      ordenado = ordenado ? ordenado : "quantidade";
+
       const vendas = await sequelize.query(
         `
-        SELECT produto.nome, SUM(venda_produto.valor_total) as total, SUM(venda_produto.quantidade) as quantidade FROM "venda_status"
+        SELECT produto.nome, 
+               SUM(venda_produto.valor_total) as total, 
+               SUM(venda_produto.quantidade) as quantidade 
+        FROM "venda_status"
         JOIN venda_produto ON venda_produto.venda_status_id = venda_status.id
         JOIN produto ON produto.id = venda_produto.produto_id
-        
         WHERE venda_status.estabelecimento_id = '${estabelecimento_id}'
-        AND
-        venda_status.data = '${data}' 
+        ${dataInicio ? `AND venda_status.data >= '${dataInicio}'` : ""}
+        ${dataFim ? `AND venda_status.data <= '${dataFim}'` : ""}
+        ${
+          data && !dataInicio && !dataFim
+            ? `AND venda_status.data = '${data}'`
+            : ""
+        }
         GROUP BY nome
-        -- so alterar o campo quantidade ou falor total
         ORDER BY ${ordenado} DESC; 
-      `,
+        `,
         { raw: true, fieldMap: true }
       );
+
       return vendas[0];
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
