@@ -28,40 +28,40 @@ RotaVendaStatus.delete(
 //CRIAR OUTRA ROTA
 
 //relatorio de vendas
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/gerar-ultimas-vendas/",
   VendaStatusController.gerarUltimasVendas
 );
 
 //relatorio de dias
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/dias-rentaveis/",
   VendaStatusController.diasRentaveis
 );
 
 //relatorios por produtos
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/produtos-tipo-pagamento/",
   VendaStatusController.produtosTipoPagamento
 );
 
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/ultimos-produtos-vendidos/",
   VendaStatusController.ultimosProdutosVendidos
 );
 
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/produtos-vendidos-rentaveis/",
   VendaStatusController.gerarProdutosVendidosRentaveis
 );
 
 // relatorio por tipos de pagamento
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/tipo-pagamento/",
   VendaStatusController.tipoPagamento
 );
 
-RotaVendaStatus.get(
+RotaVendaStatus.post(
   "/api/relatorio/tipos-pagamentos-produto/",
   VendaStatusController.tiposPagamentoProduto
 );
