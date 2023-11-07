@@ -61,6 +61,20 @@ export default function ModalCriarProduto({
         setLoading(false);
       }
     } else {
+      try {
+        setLoading(true);
+        const response = await api.put(`/produto/${formProduto.id}`, formProduto);
+        const produtosAtualizados = produtos.filter(
+          (produto) => produto.id !== formProduto.id
+        );
+        console.log([...produtosAtualizados, response.data.contant]);
+        setProdutos([...produtosAtualizados, response.data.contant]);
+        setLoading(false);
+        alert("Produto atualizado com sucesso!");
+      } catch (err) {
+        alert(err.response.data.error);
+        setLoading(false);
+      }
       console.log("Atualizar");
     }
   }
@@ -78,13 +92,11 @@ export default function ModalCriarProduto({
 
           let taxasCadastradas = response.data.content || [];
 
-          // Filtrando taxas que não existem no produto
           for (let i = 0; i < taxasCadastradas.length; i++) {
             const taxa = taxasCadastradas[i];
             let existeTaxa = false;
             let existeTipoPagamento = false;
 
-            // Verifica se a taxa já existe no produto
             for (let j = 0; j < produto.produto_taxas.length; j++) {
               const produtoTaxa = produto.produto_taxas[j];
               if (produtoTaxa.taxa.id === taxa.id) {
@@ -93,7 +105,6 @@ export default function ModalCriarProduto({
               }
             }
 
-            // Verifica se o tipo de pagamento já existe no produto
             for (let j = 0; j < produto.produto_taxas.length; j++) {
               const produtoTaxa = produto.produto_taxas[j];
               if (produtoTaxa.taxa.tipo_pagamento.id === taxa.tipo_pagamento.id) {
@@ -102,7 +113,6 @@ export default function ModalCriarProduto({
               }
             }
 
-            // Adiciona a taxa filtrada se não existir no produto e não tiver o tipo de pagamento já cadastrado
             if (!existeTaxa && !existeTipoPagamento) {
               taxasFiltradas.push(taxa);
             }
@@ -249,40 +259,50 @@ export default function ModalCriarProduto({
                 />
               </div>
             </div>
-            <h4 className="text-lg">Produto Taxas</h4>
-            <div>
-              {editarProduto?.produto_taxas.map(({ taxa, id }) => (
-                <div className="flex space-x-3">
-                  <div>{taxa.nome}</div>
-                  <div>{taxa.taxa}</div>
-                  <div>{taxa.acumulativa}</div>
-                  <div>{taxa.tipo_pagamento.tipo}</div>
-                  <button type="button" onClick={() => excluirVinculo(id)}>
-                    Excluir
-                  </button>
-                </div>
-              ))}
-
-              <h3 className="my-6">adicionar taxa</h3>
-              <div className="flex ">
-                <select
-                  name=""
-                  id=""
-                  value={taxaSelecionada}
-                  onChange={(e) => setTaxaSelecionada(e.target.value)}
-                >
-                  <option value="">Selecione</option>
-                  {taxasFiltradas.map((taxa) => (
-                    <option value={taxa.id}>{`${taxa.nome} ${taxa.taxa} ${
-                      taxa.acumulativa ? "acumulativa" : "não acumulativa"
-                    } ${taxa.tipo_pagamento.tipo}`}</option>
+            {editarProduto ? (
+              <>
+                <h4 className="text-lg">Adicionar taxas</h4>
+                <div>
+                  {editarProduto?.produto_taxas.map(({ taxa, id }) => (
+                    <div className="flex space-x-3">
+                      <div>{taxa.nome}</div>
+                      <div>{taxa.taxa}</div>
+                      <div>{taxa.acumulativa}</div>
+                      <div>{taxa.tipo_pagamento.tipo}</div>
+                      <button type="button" onClick={() => excluirVinculo(id)}>
+                        Excluir
+                      </button>
+                    </div>
                   ))}
-                </select>
-                <button type="button" className="" onClick={() => adicionarTaxa()}>
-                  Adicionar
-                </button>
-              </div>
-            </div>
+
+                  <div className="flex ">
+                    <select
+                      name=""
+                      id=""
+                      value={taxaSelecionada}
+                      onChange={(e) => setTaxaSelecionada(e.target.value)}
+                    >
+                      <option value="">Selecione</option>
+                      {taxasFiltradas.map((taxa) => (
+                        <option value={taxa.id}>{`${taxa.nome} ${taxa.taxa} ${
+                          taxa.acumulativa ? "acumulativa" : "não acumulativa"
+                        } ${taxa.tipo_pagamento.tipo}`}</option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className="mx-3 bg-indigo-600 text-white rounded p-3"
+                      onClick={() => adicionarTaxa()}
+                    >
+                      Adicionar
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              ""
+            )}
+
             <div>
               <button
                 type="submit"
