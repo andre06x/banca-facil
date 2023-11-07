@@ -3,7 +3,7 @@ import { useEffect, useState } from "preact/hooks";
 import dynamic from "next/dynamic";
 import { getApiClient } from "./api/axios";
 import { api } from "./api/api";
-import { List, Trash2 } from "lucide-preact";
+import { Download, List, Trash2 } from "lucide-preact";
 import ModalCriarProduto from "@/components/ModalCriarProduto";
 import Venda from "@/components/Venda";
 import ModalTaxaProduto from "@/components/ModalTaxaProduto";
@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import { formatarMoeda } from "@/utils/formatPrice";
 import { TabelaTiposPagamentos, TabelasRelatorio } from "@/components/TabelasRelatorio";
+import * as XLSX from "xlsx";
 
 const MapaComponente = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -154,8 +155,19 @@ const Relatorio = ({ estabelecimento_id }) => {
       if (dataRelatorio.dataInicio && dataRelatorio.dataFim) {
         data.dataInicio = dataRelatorio.dataInicio;
         data.dataFim = dataRelatorio.dataFim;
+      } else if (
+        dataRelatorio.dataInicio &&
+        (!dataRelatorio.dataFim || dataRelatorio.dataFim === "")
+      ) {
+        data.dataInicio = dataRelatorio.dataInicio;
+        data.dataFim = new Date();
+      } else if (
+        dataRelatorio.dataFim &&
+        (!dataRelatorio.dataInicio || dataRelatorio.dataInicio === "")
+      ) {
+        data.dataFim = dataRelatorio.dataFim;
+        data.dataInicio = "1500-01-01";
       }
-      console.log(data);
       try {
         const responseUltimasVendas = await api.post(
           "/relatorio/gerar-ultimas-vendas",
@@ -221,6 +233,131 @@ const Relatorio = ({ estabelecimento_id }) => {
     percentage: ((Number(entry.quantidade) / total) * 100).toFixed(2) + "%",
     label: `${entry.nome} (${((Number(entry.quantidade) / total) * 100).toFixed(2)}%)`,
   }));
+
+  function baixarXLSX(tipo, fileName = "arquivo") {
+    let header = [];
+    let dadosFormatados = [];
+    let linhaAtual = [];
+
+    if (tipo === "produtos") {
+      header = ["Nome", "Quantidade", "Total"];
+      dadosFormatados = relatorio.produtosVendidosRentaveis.map((item) => {
+        return [item.nome, item.quantidade, item.total];
+      });
+    } else if (tipo === "tipo_pagamento") {
+      header = [
+        "Tipo de Pagamento",
+        "ID do Tipo de Pagamento",
+        "Quantidade de Vendas",
+        "Valor Total",
+      ];
+      relatorio.tipos.forEach((item) => {
+        const linhaTipo = [
+          item["tipo"],
+          item["tipo_pagamento_id"],
+          item["quantidade_vendas"],
+          item["valor_total"] || "",
+        ];
+
+        dadosFormatados.push([...linhaTipo, "fim"]);
+        if (item.produtos && item.produtos.length > 0) {
+          for (let i = 0; i < item.produtos.length; i++) {
+            const produto = item.produtos[i];
+            const linhaProduto = [
+              item["tipo"],
+              produto["nome"],
+              produto["quantidade"],
+              produto["total"],
+            ];
+            dadosFormatados.push([...linhaProduto, ["", "", "", ""]]);
+          }
+        }
+
+        dadosFormatados.push("");
+      });
+
+      dadosFormatados.pop();
+    } else if (tipo === "vendas") {
+      header = [
+        "Data",
+        "Valor Total",
+        "Nome do Usuário",
+        "Tipo de Pagamento",
+        "Nome do Produto",
+        "Preço Unitário",
+        "Quantidade",
+        "Preço Taxa",
+        "Valor Total",
+      ];
+
+      relatorio.quantidade.forEach((item) => {
+        const vendaInfo = [
+          item.data,
+          item.valor_total,
+          item.usuario.nome,
+          item.tipo_pagamento.tipo,
+        ];
+
+        dadosFormatados.push([...vendaInfo, "", "", "", ""]); // Adicione linha vazia
+
+        item.venda_produtos.forEach((produto) => {
+          const linhaProduto = [
+            "",
+            "",
+            "",
+            "",
+            produto.produto.nome,
+            produto.valor_unitario,
+            produto.quantidade,
+            produto.valor_quantidade_taxa,
+            produto.valor_total,
+          ];
+
+          dadosFormatados.push(linhaProduto);
+        });
+
+        dadosFormatados.push(["", "", "", "", "", "", "", "", ""]);
+      });
+    } else {
+      dadosFormatados = relatorio.diasRentaveis.map((item) => {
+        return [item.data, item.total];
+      });
+      header = ["Data", "Total"];
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet([["Loja:", estabelecimento_id]]);
+    XLSX.utils.sheet_add_aoa(ws, [
+      ["Data da Exportação:", new Date().toLocaleString()],
+      header,
+    ]);
+
+    console.log(dadosFormatados);
+    XLSX.utils.sheet_add_aoa(ws, dadosFormatados, { origin: -1 }); // -1 para adicionar na última linha
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet 1");
+
+    const arrayBuffer = XLSX.write(wb, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const blob = new Blob([arrayBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${tipo}-${new Date()}.xlsx`;
+
+    document.body.appendChild(a);
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 
   return (
     <div className="flex flex-col my-3">
@@ -331,9 +468,16 @@ const Relatorio = ({ estabelecimento_id }) => {
 
       <div className="my-6 grid grid-cols-12 gap-3">
         <div className="col-span-12 md:col-span-12">
-          <h1>graficos</h1>
           <div className="w-full grid grid-cols-12 ">
             <div className="col-span-12 md:col-span-6 h-96 m-5">
+              <h1>Dias rentáveis</h1>
+              <button
+                type="button"
+                className=""
+                onClick={() => baixarXLSX("dias_rentaveis")}
+              >
+                <Download color="#8884d8" />
+              </button>
               <ResponsiveContainer
                 width="100%"
                 height="100%"
@@ -364,6 +508,11 @@ const Relatorio = ({ estabelecimento_id }) => {
             </div>
 
             <div className="col-span-12 md:col-span-6 h-96 m-5">
+              <h1>Produtos mais vendidos</h1>
+
+              <button type="button" onClick={() => baixarXLSX("produtos")}>
+                <Download color="#8884d8" />
+              </button>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart width={400} height={400}>
                   <Pie
@@ -384,9 +533,19 @@ const Relatorio = ({ estabelecimento_id }) => {
             </div>
           </div>
         </div>
-        <div className="col-span-12 md:col-span-12">
-          <h1>tabelas</h1>
+        <div className="col-span-12 md:col-span-12 mt-16 mx-5">
+          <h1>Últimas vendas</h1>
+          <button onClick={() => baixarXLSX("vendas")}>
+            <Download color="#8884d8" />
+          </button>
+
           <TabelasRelatorio vendas={relatorio.quantidade} />
+          <h1 className="mt-12">Tipos de pagamentos</h1>
+
+          <button onClick={() => baixarXLSX("tipo_pagamento")}>
+            {" "}
+            <Download color="#8884d8" />
+          </button>
           <TabelaTiposPagamentos tipos={relatorio.tipos} />
         </div>
       </div>
