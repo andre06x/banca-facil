@@ -4,6 +4,7 @@ import { getApiClient } from "./api/axios";
 import { api } from "./api/api";
 import ModalCriarTaxa from "@/components/ModalCriarTaxa";
 import { Trash2 } from "lucide-preact";
+import { formatarMoeda } from "@/utils/formatPrice";
 
 export async function getServerSideProps(ctx) {
   const { "nextauth.token": token } = parseCookies(ctx);
@@ -58,58 +59,86 @@ export default function Taxas({ taxas: taxasServer }) {
             </button>
           </div>
         </div>
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" class="px-6 py-3">
-                Nome da taxa
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Valor da taxa
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Tipo de pagamento
-              </th>
 
-              <th scope="col" class="px-6 py-3">
-                Acumulativa
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {taxas.map((taxa, index) => (
-              <tr
-                key={index}
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <th
-                  scope="row"
-                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        <div className="w-full block md:hidden">
+          {taxas.map((taxa, index) => (
+            <div
+              key={index}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 p-4 mb-4 flex flex-row justify-between items-center"
+            >
+              <div className="flex-1 mb-2 sm:mb-0">
+                <h3 className="text-lg font-semibold">{taxa.nome}</h3>
+                <p>Valor: {formatarMoeda(Number(taxa.taxa))}</p>
+                <p>Tipo de pagamento: {taxa.tipo_pagamento.tipo}</p>
+                <p>Acumulativa: {taxa.acumulativa ? "Sim" : "Não"}</p>
+              </div>
+
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => excluirTaxa(taxa.id)}
+                  className="ml-4 text-red-500"
                 >
-                  {taxa.nome}
+                  Excluir
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden md:block">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" class="px-6 py-3">
+                  Nome da taxa
                 </th>
-                <td className="px-6 py-4 text-gray-400">
-                  <span>{taxa.taxa}</span>
-                </td>
-                <td className="px-6 py-4 text-gray-400">
-                  <span>{taxa.tipo_pagamento.tipo}</span>
-                </td>
-                <td className="px-6 py-4 text-gray-400">
-                  <span>{String(taxa.acumulativa)}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() => excluirTaxa(taxa.id)}
-                    className="ml-4"
-                  >
-                    <Trash2 color="red" size={20} />
-                  </button>
-                </td>
+                <th scope="col" class="px-6 py-3">
+                  Valor da taxa
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Tipo de pagamento
+                </th>
+
+                <th scope="col" class="px-6 py-3">
+                  Acumulativa
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {taxas.map((taxa, index) => (
+                <tr
+                  key={index}
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    {taxa.nome}
+                  </th>
+                  <td className="px-6 py-4 text-gray-400">
+                    <span>{formatarMoeda(Number(taxa.taxa))}</span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    <span>{taxa.tipo_pagamento.tipo}</span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    <span>{taxa.acumulativa ? "Sim" : "Não"}</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <button
+                      type="button"
+                      onClick={() => excluirTaxa(taxa.id)}
+                      className="ml-4"
+                    >
+                      <Trash2 color="red" size={20} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <ModalCriarTaxa
