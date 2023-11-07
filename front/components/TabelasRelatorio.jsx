@@ -93,9 +93,9 @@ const TableRows = ({ vendas }) => {
             </thead>
 
             <tbody>
-              {vendas?.venda_produtos.map((produto, key) => (
+              {vendas?.venda_produtos?.map((produto, key) => (
                 <tr key={key} className="bg-white ">
-                  <td className="py-3 px-4">{produto?.produto.nome}</td>
+                  <td className="py-3 px-4">{produto?.produto?.nome}</td>
                   <td className="py-3 px-4">
                     {formatarMoeda(Number(produto?.valor_unitario))}
                   </td>
@@ -116,11 +116,65 @@ const TableRows = ({ vendas }) => {
   );
 };
 
+const VendaItem = ({ venda }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="bg-white rounded-md mb-4 p-4">
+      <div
+        className="cursor-pointer flex items-center justify-between mb-4"
+        onClick={() => setOpen(!open)}
+      >
+        <div className="flex items-center">
+          <svg
+            className={`text-black w-6 h-6 z-40 mr-3 ${open ? "rotate-180" : "rotate-0"}`}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+          <span>{formatarData(venda?.data_completa)}</span>
+        </div>
+        <span className="font-bold">{formatarMoeda(Number(venda?.valor_total))}</span>
+      </div>
+
+      {open && (
+        <div className="space-y-2">
+          {venda?.venda_produtos.map((produto, key) => (
+            <div key={key} className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold">{produto?.produto?.nome}</h3>
+                <p>Preço: {formatarMoeda(Number(produto?.valor_unitario))}</p>
+                <p>Quantidade: {produto?.quantidade}</p>
+              </div>
+              <p className="font-bold">{formatarMoeda(Number(produto?.valor_total))}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export function TabelasRelatorio({ vendas }) {
   return (
     <div className=" flex flex-col items-center justify-center py-5 ">
       <div className="w-full relative max-h-96 overflow-x-scroll md:overflow-auto max-w-7xl 2xl:max-w-none mt-2 ">
-        <table className="table-auto relative overflow-scroll md:overflow-auto w-full text-left font-inter mb-4">
+        <div className="block md:hidden">
+          {vendas?.map((venda, index) => (
+            <VendaItem key={index} venda={venda} />
+          ))}
+        </div>
+        <table className="hidden md:block table-auto relative overflow-scroll md:overflow-auto w-full text-left font-inter mb-4">
           <thead className="bg-white sticky z-10 top-0 rounded-lg text-base text-white font-semibold w-full mb-3">
             <tr className="">
               <th className="py-3 px-3 text-[#ababac] sm:text-base font-medium whitespace-nowrap w-1/6">
@@ -229,11 +283,62 @@ const TableRowsTiposPagamentos = ({ vendas }) => {
   );
 };
 
+const DivTableRowsTiposPagamentos = ({ vendas }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="bg-white rounded-md p-4 mb-4">
+      <div
+        className="cursor-pointer flex items-center justify-between mb-4"
+        onClick={() => setOpen(!open)}
+      >
+        <div className="flex items-center">
+          <svg
+            className={`text-black w-6 h-6 z-40 mr-3 ${open ? "rotate-180" : "rotate-0"}`}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+          {vendas?.tipo}
+        </div>
+      </div>
+      {open && (
+        <div className="space-y-2">
+          {vendas?.produtos?.map((produto, key) => (
+            <div key={key} className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold">{produto?.nome}</h3>
+                <p>Quantidade: {produto?.quantidade}</p>
+              </div>
+              <p className="font-bold">{formatarMoeda(Number(produto?.total))}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export function TabelaTiposPagamentos({ tipos }) {
   return (
     <div className="flex flex-col items-center justify-center py-5">
       <div className="w-full overflow-x-scroll md:overflow-auto max-w-7xl 2xl:max-w-none mt-2">
-        <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter mb-4">
+        <div className="block md:hidden">
+          {tipos?.map((data, index) => (
+            <DivTableRowsTiposPagamentos key={index} vendas={data} />
+          ))}
+        </div>
+        <table className="hidden md:block table-auto overflow-scroll md:overflow-auto w-full text-left font-inter mb-4">
           <thead className="bg-white rounded-lg text-base text-white font-semibold w-full mb-3">
             <tr>
               <th className="py-3 px-3 text-[#ababac] sm:text-base font-medium whitespace-nowrap w-1/6">
