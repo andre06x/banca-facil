@@ -6,10 +6,11 @@ import { Trash2 } from "lucide-preact";
 import Venda from "@/components/Venda";
 import ModalCriarProduto from "@/components/ModalCriarProduto";
 import { getApiClient } from "../api/axios";
+import { formatarMoeda } from "@/utils/formatPrice";
 
 export async function getServerSideProps(ctx) {
   const { slug } = ctx.query;
-  const estabelecimento_id = slug[0]; // Extrai o ID do slug
+  const estabelecimento_id = slug[0];
   console.log(estabelecimento_id);
   const { "nextauth.token": token, "nextauth.usuario": usuario } = parseCookies(ctx);
   if (!token) {
@@ -60,7 +61,7 @@ export default function Produtos({ estabelecimento, produtos: produtosServer, us
   }
   if (estabelecimento === null) return "debug";
   return (
-    <div class="mt-20 relative overflow-x-auto shadow-md sm:rounded-lg px-1">
+    <div class="w-full relative overflow-x-auto shadow-md sm:rounded-lg px-1">
       <div class="pb-4 pt-2 bg-white dark:bg-gray-900">
         <div className="flex justify-between mx-3">
           <span className="text-3xl text-gray-500 ">
@@ -74,88 +75,130 @@ export default function Produtos({ estabelecimento, produtos: produtosServer, us
           </button>
         </div>
       </div>
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" class="px-6 py-3"></th>
 
-            <th scope="col" class="px-6 py-3">
-              Nome
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Valor
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Disponivel
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Categoria
-            </th>
-            <th scope="col" class="px-6 py-3"></th>
-          </tr>
-        </thead>
-        <tbody>
+      <div className="block md:hidden">
+        <div class="w-full">
           {produtos.map((produto, index) => (
-            <tr
+            <div
               key={index}
-              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 p-4 mb-4 flex flex-row justify-between items-center"
             >
-              <th scope="col" class="px-6 py-3"></th>
+              <div class="flex-1 mb-2 sm:mb-0">
+                <h3 class="text-lg font-semibold">{produto?.nome}</h3>
+                <p>Preço: {formatarMoeda(Number(produto.valor))}</p>
+                <p>Disponível: {produto.quantidade_disponivel}</p>
+                <p>Categoria: {produto?.categorium?.categoria}</p>
+              </div>
 
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {produto.nome}
-              </th>
-
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {produto.valor}
-              </th>
-
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {produto.quantidade_disponivel}
-              </th>
-
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {produto.categorium.categoria}
-              </th>
-
-              <td class="px-6 py-4">
+              <div class="flex items-center">
                 <button
                   type="button"
                   onClick={() => excluirProduto(produto.id)}
-                  className="ml-4"
+                  class="ml-4"
                 >
                   <Trash2 color="red" size={20} />
                 </button>
-              </td>
 
-              <td class="px-6 py-4">
                 <button
                   type="button"
-                  className="ml-4"
+                  class="ml-4"
                   onClick={() => {
                     setEditarProduto(produto);
                     setIsOpenModal(true);
                   }}
                 >
-                  EDIT
+                  EDITAR
                 </button>
-              </td>
-            </tr>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
+
+      <div className="block overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" class="px-6 py-3"></th>
+
+              <th scope="col" class="px-6 py-3">
+                Nome
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Valor
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Disponivel
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Categoria
+              </th>
+              <th scope="col" class="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {produtos.map((produto, index) => (
+              <tr
+                key={index}
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              >
+                <th scope="col" class="px-6 py-3"></th>
+
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {produto.nome}
+                </th>
+
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {formatarMoeda(Number(produto.valor))}
+                </th>
+
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {produto.quantidade_disponivel}
+                </th>
+
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {produto?.categorium?.categoria}
+                </th>
+
+                <td class="px-6 py-4">
+                  <button
+                    type="button"
+                    onClick={() => excluirProduto(produto.id)}
+                    className="ml-4"
+                  >
+                    <Trash2 color="red" size={20} />
+                  </button>
+                </td>
+
+                <td class="px-6 py-4">
+                  <button
+                    type="button"
+                    className="ml-4"
+                    onClick={() => {
+                      setEditarProduto(produto);
+                      setIsOpenModal(true);
+                    }}
+                  >
+                    EDITAR
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <ModalCriarProduto
         estabelecimento={estabelecimento.id}
