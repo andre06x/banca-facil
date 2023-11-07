@@ -85,7 +85,7 @@ class ProdutoRepository {
 
   async editarProduto(id, obj_produto) {
     try {
-      const data = await Produto.update(obj_produto, { where: { id } });
+      await Produto.update(obj_produto, { where: { id } });
       return this.buscarProduto(id);
     } catch (err) {
       throw new APIException(httpStatus.BAD_REQUEST, err.message);
