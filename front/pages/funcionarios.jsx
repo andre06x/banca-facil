@@ -93,59 +93,104 @@ export default function Funcionarios({
             </button>
           </div>
         </div>
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" class="px-6 py-3">
-                Nome
-              </th>
-              <th scope="col" class="px-6 py-3">
-                Email
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {funcionarios.map((funcionario, index) => (
-              <tr
-                key={index}
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <th
-                  scope="row"
-                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  {funcionario.nome}
-                </th>
-                <td className="px-6 py-4 text-gray-400">
-                  <span>{funcionario.email}</span>
-                </td>
 
-                <td class="px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      funcionario.id === formFuncionario.id
-                        ? setFormFuncionario({})
-                        : setFormFuncionario(funcionario)
-                    }
-                    className="ml-4"
-                  >
-                    <Pencil color="gray" size={20} />
-                  </button>
-                </td>
-                <td class="px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() => excluirFuncionario(funcionario.id)}
-                    className="ml-4"
-                  >
-                    <Trash2 color="red" size={20} />
-                  </button>
-                </td>
+        <div className="w-full block md:hidden">
+          <div className="bg-gray-50 dark:bg-gray-700 text-xs text-gray-700 uppercase p-3">
+            <div className="flex justify-between">
+              <div className="w-1/2">Nome</div>
+              <div className="w-1/2">Email</div>
+            </div>
+          </div>
+
+          {funcionarios.map((funcionario, index) => (
+            <div
+              key={index}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 p-4 flex justify-between items-center"
+            >
+              <div className="w-1/2 px-2">
+                <h3 className="text-lg font-medium">{funcionario.nome}</h3>
+                <p>Email: {funcionario.email}</p>
+              </div>
+
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() =>
+                    funcionario.id === formFuncionario.id
+                      ? setFormFuncionario({})
+                      : setFormFuncionario(funcionario)
+                  }
+                  className="ml-4"
+                >
+                  <Pencil color="gray" size={20} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => excluirFuncionario(funcionario.id)}
+                  className="ml-4 text-red-500"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden md:block">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" class="px-6 py-3">
+                  Nome
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Email
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {funcionarios.map((funcionario, index) => (
+                <tr
+                  key={index}
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    {funcionario.nome}
+                  </th>
+                  <td className="px-6 py-4 text-gray-400">
+                    <span>{funcionario.email}</span>
+                  </td>
+
+                  <td class="px-6 py-4">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        funcionario.id === formFuncionario.id
+                          ? setFormFuncionario({})
+                          : setFormFuncionario(funcionario)
+                      }
+                      className="ml-4"
+                    >
+                      <Pencil color="gray" size={20} />
+                    </button>
+                  </td>
+                  <td class="px-6 py-4">
+                    <button
+                      type="button"
+                      onClick={() => excluirFuncionario(funcionario.id)}
+                      className="ml-4"
+                    >
+                      <Trash2 color="red" size={20} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {formFuncionario.id ? (
@@ -153,7 +198,7 @@ export default function Funcionarios({
           <h1 className="text-2xl text-gray-500 mb-2">
             Editando funcionário {formFuncionario.nome}
           </h1>
-          <form className="space-y-6" onSubmit={editarFuncionario}>
+          <form className="space-y-6 mb-5" onSubmit={editarFuncionario}>
             <div>
               <label
                 htmlFor="nome"
@@ -336,9 +381,9 @@ function EstabelecimentoFuncionario({
                 <button
                   type="button"
                   onClick={() => vincularFuncionario()}
-                  className="ml-4"
+                  className="ml-4 bg-indigo-600 p-2 rounded text-white"
                 >
-                  <BadgePlus color="blue" size={20} />
+                  Adicionar
                 </button>
               </td>
             </td>
