@@ -1,6 +1,7 @@
 import { MinusCircle, Search, ShoppingBag, ShoppingCart } from "lucide-preact";
 import { useEffect, useState } from "preact/hooks";
 import ModalRealizarVenda from "./ModalRealizarVenda";
+import { formatarMoeda } from "@/utils/formatPrice";
 
 export default function Venda({ estabelecimento, produtos, setProdutos }) {
   const [produtosFiltrados, setProdutosFiltrados] = useState(produtos);
@@ -13,9 +14,14 @@ export default function Venda({ estabelecimento, produtos, setProdutos }) {
   useEffect(() => {
     let categorias = [];
     produtos.forEach((element) => {
-      if (!categorias.find((categoria) => categoria.id === element.categoria_id)) {
-        const cat = { id: element.categoria_id, categoria: element.categorium.categoria };
-        categorias.push(cat);
+      if (!categorias.find((categoria) => categoria.id === element?.categoria_id)) {
+        const cat = {
+          id: element.categoria_id,
+          categoria: element?.categorium?.categoria,
+        };
+        if (cat.categoria) {
+          categorias.push(cat);
+        }
       }
     });
     setProdutosFiltrados(produtos);
@@ -60,7 +66,7 @@ export default function Venda({ estabelecimento, produtos, setProdutos }) {
     }
   }
   return (
-    <div className="space-y-5">
+    <div className="mt-16 space-y-5">
       <h1 className="text-xl text-black font-semibold	">
         Venda {estabelecimento.nome_estabelecimento}
       </h1>
@@ -104,7 +110,7 @@ export default function Venda({ estabelecimento, produtos, setProdutos }) {
         ))}
       </div>
 
-      <pre style={{ width: 700, whiteSpace: "pre-wrap" }}>{JSON.stringify(carrinho)}</pre>
+      {/* <pre style={{ width: 700, whiteSpace: "pre-wrap" }}>{JSON.stringify(carrinho)}</pre> */}
       <div className="grid grid-cols-12 gap-4">
         {produtosFiltrados.map((produto, index) => (
           <div
@@ -125,7 +131,9 @@ export default function Venda({ estabelecimento, produtos, setProdutos }) {
               }
             >
               <div className="flex flex-col">
-                <span className="font-semibold">{produto.valor}/Un</span>
+                <span className="font-semibold">
+                  {formatarMoeda(Number(produto.valor))}/Un
+                </span>
                 <span className="font-medium text-sm">
                   {produtoClicado.includes(produto) || produto.nome.length < 20
                     ? produto.nome
