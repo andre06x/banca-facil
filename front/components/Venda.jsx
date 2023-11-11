@@ -66,7 +66,7 @@ export default function Venda({ estabelecimento, produtos, setProdutos }) {
     }
   }
   return (
-    <div className="mt-16 space-y-5">
+    <div className="mt-5 space-y-5">
       <h1 className="text-xl text-black font-semibold	">
         Venda {estabelecimento.nome_estabelecimento}
       </h1>
