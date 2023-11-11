@@ -43,7 +43,7 @@ export default function LoginLayout() {
 
       const { data } = await api.get("/tipos-pagamento");
       setCookie(undefined, "tipos-pagamentos", JSON.stringify(data.content), {
-        maxAge: 60 * 60 * 1,
+        maxAge: 60 * 60 * 24,
       });
 
       setLoading(false);
