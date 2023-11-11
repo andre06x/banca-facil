@@ -6,6 +6,7 @@ import axios from "axios";
 import MapaModal from "./MapaModal";
 import { parseCookies } from "nookies";
 import { api } from "@/pages/api/api";
+import { getApiClient } from "@/pages/api/axios";
 export default function ModalCriarEstabelecimento({
   isOpenModal,
   setOpenModal,
@@ -27,7 +28,7 @@ export default function ModalCriarEstabelecimento({
   const criarCadastro = async (event) => {
     event.preventDefault();
     try {
-      const { "nextauth.usuario": usuario_id } = parseCookies();
+      const { "nextauth.usuario": usuario_id, "nextauth.token": token } = parseCookies();
       console.log(usuario_id);
 
       const data = {
@@ -37,8 +38,11 @@ export default function ModalCriarEstabelecimento({
         lon: clickedLatLng[1],
       };
       setIsloading(true);
-      await api.post("/estabelecimento", data);
-      alert("criado com sucesso!");
+
+      const apiWeb = getApiClient(null, token);
+
+      await apiWeb.post("/estabelecimento", data);
+      alert("Criado com sucesso!");
       setEstabelecimentos([...estabelecimentos, data]);
       setIsloading(false);
     } catch (err) {
