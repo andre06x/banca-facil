@@ -100,7 +100,7 @@ export default function ModalCriarTaxa({ setIsOpenModal, isOpenModal, taxas, set
                 htmlFor="taxa"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Taxa
+                Valor da taxa
               </label>
               <div className="mt-2">
                 <input
