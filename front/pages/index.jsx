@@ -72,24 +72,48 @@ export default function Home({ token }) {
   const [estabelecimentos, setEstabelecimentos] = useState([]);
   const [isOpenModal, setOpenModal] = useState(false);
   const [estabelecimento, setEstabelecimento] = useState({});
-
+  const [mensagem, setMensagem] = useState(false);
   const abrirModal = () => setOpenModal(!isOpenModal);
 
+  const buscarTodosEstabelecimentos = async () => {
+    try {
+      const apiWeb = getApiClient(null, token);
+      apiWeb
+        .get(`/todos-estabelecimentos/${id}`)
+        .then((response) => {
+          setEstabelecimentos(response.data.content);
+          if (response.data.content.length < 1) {
+            setMensagem("Não há bancas cadastradas!");
+          } else {
+            setMensagem(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      //console.log(err.message);
+    }
+  };
   useEffect(() => {
     if (token) {
-      console.log(token);
-      try {
-        const apiWeb = getApiClient(null, token);
-        apiWeb.get(`/todos-estabelecimentos/${id}`).then((response) => {
-          console.log(response.data);
-          setEstabelecimentos(response.data.content);
-        });
-      } catch (err) {
-        console.log(err);
-      }
+      console.log("entrou");
+      buscarTodosEstabelecimentos();
     }
   }, [token]);
 
+  const excluirBanca = async (e, id) => {
+    e.stopPropagation();
+    if (confirm("Deseja excluir o estabelecimento? ")) {
+      try {
+        const apiWeb = getApiClient(null, token);
+        await apiWeb.delete(`/estabelecimento/${id}`);
+        buscarTodosEstabelecimentos();
+      } catch (err) {
+        alert("Ocorreu o problema ao excluir banca.");
+      }
+    }
+  };
   return (
     <div>
       <div className="flex justify-between  mb-7">
@@ -107,18 +131,25 @@ export default function Home({ token }) {
             onClick={() => setEstabelecimento(estabelecimento)}
             className="bg-white col-span-12 md:col-span-4 p-5 rounded  shadow-xl"
           >
-            <div className="text-center ">{estabelecimento.nome_estabelecimento}</div>
+            <div className="text-center flex justify-between mb-3">
+              <span>{estabelecimento.nome_estabelecimento}</span>
+              <button onClick={(e) => excluirBanca(e, estabelecimento.id)}>
+                <Trash2 color="red" size={20} />
+              </button>
+            </div>
             <div>
               <MapaComponente estabelecimento={estabelecimento} />
             </div>
           </div>
         ))}
       </div>
+      {mensagem && <h1 className="text-center font-bold text-2xl">{mensagem}</h1>}
       <ModalCriarEstabelecimento
         isOpenModal={isOpenModal}
         setOpenModal={setOpenModal}
         estabelecimentos={estabelecimentos}
         setEstabelecimentos={setEstabelecimentos}
+        buscarTodosEstabelecimentos={buscarTodosEstabelecimentos}
       />
 
       {estabelecimento.id ? (
