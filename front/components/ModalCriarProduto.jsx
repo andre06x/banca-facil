@@ -1,7 +1,7 @@
 import { api } from "@/pages/api/api";
 import { Modal } from "flowbite-react";
 import { parseCookies } from "nookies";
-import { useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import { useEffect } from "react";
 
 export default function ModalCriarProduto({
@@ -20,6 +20,7 @@ export default function ModalCriarProduto({
   const [taxasFiltradas, setTaxasFiltradas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [taxaSelecionada, setTaxaSelecionada] = useState("");
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const produtoBase = editarProduto
@@ -205,9 +206,10 @@ export default function ModalCriarProduto({
                 <input
                   id="valor"
                   name="valor"
-                  onChange={onChange}
-                  type="text"
-                  pattern="^\d{1,8}(\.\d{1,2})?$"
+                  onChange={(event) => {
+                    setFormProduto({ ...formProduto, valor: event.target.value });
+                  }}
+                  type="number"
                   value={formProduto.valor}
                   required
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
