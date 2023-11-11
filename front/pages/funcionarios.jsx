@@ -4,6 +4,7 @@ import { parseCookies } from "nookies";
 import { BadgePlus, Pencil, Trash2 } from "lucide-preact";
 import dynamic from "next/dynamic";
 import { getApiClient } from "./api/axios";
+import { verify } from "jsonwebtoken";
 
 const ModalFuncionario = dynamic(() => import("@/components/ModalCriarFuncionario"), {
   ssr: true,
@@ -11,12 +12,24 @@ const ModalFuncionario = dynamic(() => import("@/components/ModalCriarFuncionari
 
 export async function getServerSideProps(ctx) {
   const { "nextauth.token": token, "nextauth.usuario": usuario } = parseCookies(ctx);
-  console.log(token);
+
   if (!token) {
     return {
       redirect: {
         permanent: false,
         destination: "/login",
+      },
+      props: {},
+    };
+  }
+  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
+  const admin = decode?.auth.admin;
+
+  if (!admin) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
       },
       props: {},
     };

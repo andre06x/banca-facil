@@ -4,10 +4,11 @@ import { getApiClient } from "./api/axios";
 import { Trash, Trash2 } from "lucide-preact";
 import ModalCriarCategoria from "@/components/ModalCriarCategoria";
 import { api } from "./api/api";
+import { verify } from "jsonwebtoken";
 
 export async function getServerSideProps(ctx) {
-  const { "nextauth.token": token } = parseCookies(ctx);
-  console.log(token);
+  const { "nextauth.token": token, "nextauth.usuario": id } = parseCookies(ctx);
+
   if (!token) {
     return {
       redirect: {
@@ -18,7 +19,18 @@ export async function getServerSideProps(ctx) {
     };
   }
 
-  const { "nextauth.usuario": id } = parseCookies(ctx);
+  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
+  const admin = decode?.auth.admin;
+
+  if (!admin) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
   const response = await api.get(`/todas-categorias/${id}`);
   const categorias = response.data.content || [];
 

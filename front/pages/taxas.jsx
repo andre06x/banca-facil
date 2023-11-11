@@ -5,10 +5,11 @@ import { api } from "./api/api";
 import ModalCriarTaxa from "@/components/ModalCriarTaxa";
 import { Trash2 } from "lucide-preact";
 import { formatarMoeda } from "@/utils/formatPrice";
+import { verify } from "jsonwebtoken";
 
 export async function getServerSideProps(ctx) {
-  const { "nextauth.token": token } = parseCookies(ctx);
-  console.log(token);
+  const { "nextauth.token": token, "nextauth.usuario": id } = parseCookies(ctx);
+
   if (!token) {
     return {
       redirect: {
@@ -19,7 +20,19 @@ export async function getServerSideProps(ctx) {
     };
   }
 
-  const { "nextauth.usuario": id } = parseCookies(ctx);
+  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
+  const admin = decode?.auth.admin;
+
+  if (!admin) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+
   const response = await api.get(`/todas-taxas/${id}`);
   const taxas = response.data.content;
   return { props: { taxas } };
