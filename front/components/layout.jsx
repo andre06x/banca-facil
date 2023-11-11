@@ -3,6 +3,8 @@ import { Router, useRouter } from "next/router";
 import { destroyCookie, parseCookies } from "nookies";
 import Link from "next/link";
 import Image from "next/image";
+import { Html } from "next/document";
+import Head from "next/head";
 
 export default function Layout({ children, rotas }) {
   const { "nextauth.nome": nome } = parseCookies();
@@ -22,6 +24,7 @@ export default function Layout({ children, rotas }) {
 
   return (
     <>
+      <title>BancaFácil</title>
       <nav className="bg-white p-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
@@ -67,15 +70,17 @@ export default function Layout({ children, rotas }) {
           </div>
         </div>
         {isOpen ? (
-          <div className="md:hidden mt-2 transition duration-300 flex flex-col">
+          <div className="md:hidden mt-2 transition duration-300 flex flex-col space-y-2">
             {rotas.map((rota, indice) => (
               <Link className="hover:text-gray-300" href={rota.redirecionar} key={indice}>
                 {rota.nome}
               </Link>
             ))}
-            <button className="hover:text-gray-300" onClick={logout}>
-              Logout
-            </button>
+            <div>
+              <button className="hover:text-gray-300" onClick={logout}>
+                Logout
+              </button>
+            </div>
           </div>
         ) : (
           ""
