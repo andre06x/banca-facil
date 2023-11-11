@@ -5,9 +5,10 @@ import { parseCookies } from "nookies";
 export function getApiClient(ctx, tokenClient) {
   const { "nextauth.token": token } = parseCookies(ctx);
   const api = axios.create({
-    baseURL: "http://192.168.1.102:5000/api",
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
   });
 
+  console.log(api);
   api.interceptors.request.use((config) => {
     console.log(config);
     return config;
