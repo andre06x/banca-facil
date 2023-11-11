@@ -20,9 +20,7 @@ export default function CriarConta() {
       const response = await api.post("/usuario", form);
       const { nome } = response.data.content;
 
-      alert(
-        `${nome} sua conta criada com sucesso! Você será redirecionado para o login.`
-      );
+      alert(`${nome} sua conta criada com sucesso! Redirecionando para o login.`);
       setLoading(false);
       router.push("/login", { scroll: false });
     } catch (err) {
