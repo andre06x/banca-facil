@@ -12,6 +12,7 @@ export default function ModalCriarEstabelecimento({
   setOpenModal,
   setEstabelecimentos,
   estabelecimentos,
+  buscarTodosEstabelecimentos,
 }) {
   const [clickedLatLng, setClickedLatLng] = useState([
     -13.2399454992863, -51.67968750000001,
@@ -43,12 +44,16 @@ export default function ModalCriarEstabelecimento({
 
       await apiWeb.post("/estabelecimento", data);
       alert("Criado com sucesso!");
-      setEstabelecimentos([...estabelecimentos, data]);
+
+      // setEstabelecimentos([...estabelecimentos, data]);
+      buscarTodosEstabelecimentos();
       setIsloading(false);
     } catch (err) {
       setIsloading(false);
-
       console.log(err);
+      if (err?.response.data) {
+        alert(err?.response.data.error);
+      }
     }
   };
   const onChange = (event) => {
@@ -153,7 +158,6 @@ export default function ModalCriarEstabelecimento({
               setClickedLatLng={setClickedLatLng}
               nome={formEstabelecimento.nome}
             />
-            {JSON.stringify(clickedLatLng)}
             <div>
               <button
                 type="submit"
