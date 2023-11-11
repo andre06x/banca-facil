@@ -8,7 +8,7 @@ import { parseCookies } from "nookies";
 import LoginLayout from "@/components/login.jsx";
 import { verify } from "jsonwebtoken";
 import { useEffect } from "react";
-import { useErrorBoundary } from "./NotFound.jsx";
+import useErrorBoundary from "./NotFound.jsx";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());

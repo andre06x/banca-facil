@@ -12,4 +12,4 @@ const useErrorBoundary = () => {
   }, []);
 };
 
-export { useErrorBoundary };
+export default useErrorBoundary;
