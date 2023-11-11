@@ -106,9 +106,14 @@ export default function ModalCriarTaxa({ setIsOpenModal, isOpenModal, taxas, set
                 <input
                   id="taxa"
                   name="taxa"
-                  onChange={onChange}
+                  onInput={(event) => {
+                    const sanitizedValue = event.target.value.replace(/[^0-9.]/g, "");
+                    event.target.value = sanitizedValue;
+                  }}
+                  onChange={(event) => {
+                    setFormTaxa({ ...formTaxa, taxa: event.target.value });
+                  }}
                   type="text"
-                  pattern="^\d{1,8}(\.\d{1,2})?$"
                   value={formTaxa.taxa}
                   required
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
