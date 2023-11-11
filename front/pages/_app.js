@@ -8,10 +8,16 @@ import { parseCookies } from "nookies";
 import LoginLayout from "@/components/login.jsx";
 import { verify } from "jsonwebtoken";
 import { useEffect } from "react";
+import { useErrorBoundary } from "./NotFound.jsx";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
+
+function ErrorFallback({ error }) {
+  console.error("Erro na renderização:", error);
+  return <NotFound />;
+}
 
 export default function App({ Component, pageProps, authenticated, rotas }) {
   const { "nextauth.usuario": usuario } = parseCookies();
@@ -24,6 +30,8 @@ export default function App({ Component, pageProps, authenticated, rotas }) {
       router.push("/login");
     }
   }, [authenticated, usuario]);
+
+  useErrorBoundary();
 
   if (!authenticated) {
     return <Component {...pageProps} />;
