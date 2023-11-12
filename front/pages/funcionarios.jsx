@@ -91,7 +91,15 @@ export default function Funcionarios({
     setFormFuncionario({ ...formFuncionario, [name]: value });
   }
 
-  function excluirFuncionario(event) {}
+  async function excluirFuncionario(id) {
+    try {
+      const response = await api.delete(`/usuario/${id}`);
+      setFuncionarios(funcionarios.filter((obj) => obj.id !== id));
+      alert("Funcionário excluído com sucesso!");
+    } catch (err) {
+      alert("Erro ao excluir funcionário");
+    }
+  }
   return (
     <div>
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-3">
