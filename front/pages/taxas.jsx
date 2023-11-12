@@ -33,9 +33,16 @@ export async function getServerSideProps(ctx) {
     };
   }
 
-  const response = await api.get(`/todas-taxas/${id}`);
-  const taxas = response.data.content;
-  return { props: { taxas } };
+  const apiWeb = getApiClient(ctx, token);
+
+  try {
+    const response = await apiWeb.get(`/todas-taxas/${id}`);
+    const taxas = response.data.content;
+    return { props: { taxas } };
+  } catch {
+    const taxas = [];
+    return { props: { taxas } };
+  }
 }
 
 export default function Taxas({ taxas: taxasServer }) {

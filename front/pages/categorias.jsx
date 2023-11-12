@@ -31,7 +31,9 @@ export async function getServerSideProps(ctx) {
       props: {},
     };
   }
-  const response = await api.get(`/todas-categorias/${id}`);
+  const apiWeb = getApiClient(ctx, token);
+
+  const response = await apiWeb.get(`/todas-categorias/${id}`);
   const categorias = response.data.content || [];
 
   return { props: { categorias } };
