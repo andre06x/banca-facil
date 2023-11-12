@@ -48,7 +48,8 @@ export default function LoginLayout() {
 
       setLoading(false);
 
-      router.push("/", { scroll: false });
+      window.location = "/";
+      //router.push("/", { scroll: false });
     } catch (err) {
       console.log(err);
 
