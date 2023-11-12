@@ -58,7 +58,7 @@ export default function Taxas({ taxas: taxasServer }) {
       await api.delete(`/taxa/${taxa}`);
       const taxasAtualizadas = taxas.filter((item) => item.id !== taxa);
       setTaxas(taxasAtualizadas);
-      alert("excluido com sucesso!");
+      alert("Taxa excluída com sucesso!");
     } catch (err) {
       console.log(err.message);
       alert(err?.response.data.err || err.message);

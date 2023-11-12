@@ -25,6 +25,7 @@ export default function ModalCriarTaxa({
       console.log(response);
       setFuncionarios([...funcionarios, response.data.content]);
       setForm({ nome: "", senha: "", email: "", responsavel: usuario });
+      alert("Funcionário criado com sucesso!");
     } catch (err) {
       alert(err.response.data.error);
     }
