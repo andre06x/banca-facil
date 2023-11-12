@@ -16,15 +16,15 @@ const router = new Router();
 router.post("/api/usuario", UsuarioController.criarUsuario);
 router.post("/api/usuario/autenticar/", UsuarioController.autenticar);
 
+router.use(RotaTipoPagamento);
+router.use(CheckToken);
 router.use(RotaUsuario);
 router.use(RotaCategoria);
 router.use(RotaProduto);
-router.use(RotaTipoPagamento);
-router.use(RotaTaxa);
 router.use(RotaProdutoTaxa);
-router.use(RotaVendaStatus);
 router.use(RotaFuncionarioEstabelecimento);
-router.use(CheckToken);
+router.use(RotaVendaStatus);
+router.use(RotaTaxa);
 router.use(RotaEstabelecimento);
 
 //produtos
