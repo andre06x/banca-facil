@@ -25,6 +25,7 @@ import {
 import { formatarMoeda } from "@/utils/formatPrice";
 import { TabelaTiposPagamentos, TabelasRelatorio } from "@/components/TabelasRelatorio";
 import * as XLSX from "xlsx";
+import { verify } from "jsonwebtoken";
 
 const MapaComponente = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -39,6 +40,10 @@ const ModalCriarEstabelecimento = dynamic(
 
 export async function getServerSideProps(ctx) {
   const { "nextauth.token": token } = parseCookies(ctx);
+
+  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
+  const admin = decode?.auth.admin;
+
   if (!token) {
     return {
       redirect: {
@@ -48,7 +53,7 @@ export async function getServerSideProps(ctx) {
       props: {},
     };
   }
-  return { props: { token } };
+  return { props: { token, admin } };
 }
 
 const data01 = [
@@ -67,7 +72,7 @@ const dataWithPercentages = data01.map((entry) => ({
   label: `${entry.name} (${((entry.value / total) * 100).toFixed(2)}%)`,
 }));
 
-export default function Home({ token }) {
+export default function Home({ token, admin }) {
   const { "nextauth.usuario": id } = parseCookies();
   const [estabelecimentos, setEstabelecimentos] = useState([]);
   const [isOpenModal, setOpenModal] = useState(false);
@@ -118,12 +123,17 @@ export default function Home({ token }) {
     <div>
       <div className="flex justify-between  mb-7">
         <h1 className="text-3xl">Bancas</h1>
-        <button
-          onClick={() => abrirModal()}
-          className="bg-white w-10 h-10 rounded flex items-center justify-center shadow-xl"
-        >
-          <span className="text-lg font-bold">+</span>
-        </button>
+
+        {admin ? (
+          <button
+            onClick={() => abrirModal()}
+            className="bg-white w-10 h-10 rounded flex items-center justify-center shadow-xl"
+          >
+            <span className="text-lg font-bold">+</span>
+          </button>
+        ) : (
+          ""
+        )}
       </div>
       <div className="grid grid-cols-12 gap-4">
         {estabelecimentos.map((estabelecimento) => (
