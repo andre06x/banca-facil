@@ -41,9 +41,6 @@ const ModalCriarEstabelecimento = dynamic(
 export async function getServerSideProps(ctx) {
   const { "nextauth.token": token } = parseCookies(ctx);
 
-  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
-  const admin = decode?.auth.admin;
-
   if (!token) {
     return {
       redirect: {
@@ -53,6 +50,9 @@ export async function getServerSideProps(ctx) {
       props: {},
     };
   }
+  const decode = await verify(token, "YXV0aC1hcGktc2VjcmV0LWNvbnRhaW5lci0xMjM0NTY=");
+  const admin = decode?.auth.admin;
+
   return { props: { token, admin } };
 }
 
