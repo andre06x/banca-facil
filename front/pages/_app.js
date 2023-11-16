@@ -31,7 +31,7 @@ export default function App({ Component, pageProps, authenticated, rotas }) {
     }
   }, [authenticated, usuario]);
 
-  useErrorBoundary();
+  // useErrorBoundary();
 
   if (!authenticated) {
     return <Component {...pageProps} />;
